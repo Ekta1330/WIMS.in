@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Generator Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+    </style>
+</head>
+<body>
+    <h1>PDF Generator Test</h1>
+    <p>Click the button below to test the PDF generation API:</p>
+    
+    <button id="test-button">Generate Test PDF</button>
+    
+    <div id="status" style="display: none;"></div>
+    
+    <script>
+        document.getElementById('test-button').addEventListener('click', function() {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = 'Generating PDF...';
+            statusDiv.className = '';
+            statusDiv.style.display = 'block';
+            
+            // Sample invoice data
+            const invoiceData = {
+                invoiceNumber: "TEST-123",
+                issueDate: "2023-12-01",
+                dueDate: "2023-12-15",
+                customerName: "Test Customer",
+                customerAddress: "123 Test Street, Test City",
+                customerEmail: "test@example.com",
+                customerPhone: "+1 234 567 8900",
+                items: [
+                    {
+                        description: "Test Product 1",
+                        quantity: 2,
+                        rate: 100,
+                        discount: 10,
+                        amount: 190
+                    },
+                    {
+                        description: "Test Product 2",
+                        quantity: 1,
+                        rate: 200,
+                        discount: 0,
+                        amount: 200
+                    }
+                ],
+                subtotal: 390,
+                tax: 39,
+                additionalDiscount: 20,
+                shipping: 10,
+                grandTotal: 419,
+                currency: "INR",
+                notes: "This is a test invoice."
+            };
+            
+            // Make API request
+            fetch('http://localhost:3000/api/generate-pdf', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(invoiceData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                
+                statusDiv.innerHTML = 'PDF generated successfully! Opening in a new tab...';
+                statusDiv.className = 'success';
+                
+                // Open the PDF in a new tab
+                return response.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                window.open(url, '_blank');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                statusDiv.innerHTML = 'Error generating PDF: ' + error.message;
+                statusDiv.className = 'error';
+            });
+        });
+    </script>
+</body>
+</html> 

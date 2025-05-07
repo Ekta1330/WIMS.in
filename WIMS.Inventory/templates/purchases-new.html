@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchases | WIMS - Warehouse Inventory Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="purchases-panel.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Basic styles for layout */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: #2d3748;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            padding: 0 20px;
+            margin-bottom: 30px;
+        }
+        
+        .logo h2 {
+            margin: 0;
+            font-size: 1.6rem;
+        }
+        
+        .logo span {
+            color: #6c5ce7;
+            font-weight: 300;
+        }
+        
+        .sidebar-menu {
+            flex: 1;
+        }
+        
+        .sidebar-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #a0aec0;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        
+        .sidebar-menu a:hover {
+            color: white;
+            background-color: rgba(108, 92, 231, 0.1);
+        }
+        
+        .sidebar-menu a i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .sidebar-menu li.active a {
+            color: white;
+            background-color: rgba(108, 92, 231, 0.2);
+            border-left: 3px solid #6c5ce7;
+        }
+        
+        /* Main content */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        /* Purchase table */
+        .purchase-table-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            overflow: auto;
+            margin-top: 20px;
+        }
+        
+        .purchase-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .purchase-table th {
+            background-color: #f8f9fa;
+            color: #4a5568;
+            text-align: left;
+            padding: 12px 15px;
+            font-weight: 600;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .purchase-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .purchase-table tr:hover {
+            background-color: #f8fafc;
+        }
+        
+        /* Status badges */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .status-badge.paid {
+            background-color: #c6f6d5;
+            color: #22543d;
+        }
+        
+        .status-badge.due {
+            background-color: #fed7d7;
+            color: #822727;
+        }
+        
+        /* Header */
+        .purchases-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .purchases-header h1 {
+            margin: 0;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .new-purchase-btn {
+            background-color: #00b894;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+        
+        .new-purchase-btn:hover {
+            background-color: #00a382;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2>WIMS<span>System</span></h2>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-th-large"></i> Dashboard</a></li>
+                    <li><a href="products.html"><i class="fas fa-box"></i> Products</a></li>
+                    <li><a href="customers.html"><i class="fas fa-users"></i> Customers</a></li>
+                    <li><a href="sales.html"><i class="fas fa-shopping-cart"></i> Sales</a></li>
+                    <li><a href="suppliers.html"><i class="fas fa-truck"></i> Supplier</a></li>
+                    <li class="active"><a href="purchases-new.html"><i class="fas fa-shopping-bag"></i> Purchase</a></li>
+                    <li><a href="invoice-bills.html"><i class="fas fa-file-invoice-dollar"></i> Invoice & Bills</a></li>
+                    <li><a href="stock-transfer.html"><i class="fas fa-exchange-alt"></i> Stock Transfer</a></li>
+                    <li><a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                </ul>
+            </nav>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Purchases Header -->
+            <div class="purchases-header">
+                <h1>Purchase Orders</h1>
+                <button class="new-purchase-btn">
+                    <i class="fas fa-plus"></i> New Purchase Order
+                </button>
+            </div>
+            
+            <!-- Purchase Table -->
+            <div class="purchase-table-container">
+                <table class="purchase-table">
+                    <thead>
+                        <tr>
+                            <th>Invoice No.</th>
+                            <th>Date</th>
+                            <th>Supplier</th>
+                            <th>Products</th>
+                            <th>Quantity</th>
+                            <th>Purchase Price</th>
+                            <th>Tax</th>
+                            <th>Total Cost</th>
+                            <th>Payment Mode</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>PO-10235</td>
+                            <td>18 Oct 2023</td>
+                            <td>VisualTech Electronics</td>
+                            <td>4K Smart LED TV, Wireless Headphones</td>
+                            <td>25</td>
+                            <td>₹196,995</td>
+                            <td>₹35,459</td>
+                            <td>₹232,454</td>
+                            <td>Bank Transfer</td>
+                            <td><span class="status-badge paid">Paid</span></td>
+                            <td>
+                                <button style="background: none; border: none; color: #6c5ce7; cursor: pointer;">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button style="background: none; border: none; color: #00b894; cursor: pointer;">
+                                    <i class="fas fa-print"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>PO-10234</td>
+                            <td>15 Oct 2023</td>
+                            <td>FashionStyle Apparels</td>
+                            <td>Men's Formal Cotton Shirt</td>
+                            <td>50</td>
+                            <td>₹35,000</td>
+                            <td>₹6,300</td>
+                            <td>₹41,300</td>
+                            <td>Credit</td>
+                            <td><span class="status-badge due">Due</span></td>
+                            <td>
+                                <button style="background: none; border: none; color: #6c5ce7; cursor: pointer;">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button style="background: none; border: none; color: #00b894; cursor: pointer;">
+                                    <i class="fas fa-print"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>PO-10233</td>
+                            <td>12 Oct 2023</td>
+                            <td>ComfortPlus Furniture</td>
+                            <td>Ergonomic Office Chair, Wooden Coffee Table</td>
+                            <td>23</td>
+                            <td>₹131,685</td>
+                            <td>₹23,703</td>
+                            <td>₹155,388</td>
+                            <td>UPI</td>
+                            <td><span class="status-badge paid">Paid</span></td>
+                            <td>
+                                <button style="background: none; border: none; color: #6c5ce7; cursor: pointer;">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button style="background: none; border: none; color: #00b894; cursor: pointer;">
+                                    <i class="fas fa-print"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>PO-10232</td>
+                            <td>10 Oct 2023</td>
+                            <td>HydroLife Products</td>
+                            <td>Stainless Steel Water Bottle</td>
+                            <td>100</td>
+                            <td>₹29,900</td>
+                            <td>₹5,382</td>
+                            <td>₹35,282</td>
+                            <td>Cash</td>
+                            <td><span class="status-badge paid">Paid</span></td>
+                            <td>
+                                <button style="background: none; border: none; color: #6c5ce7; cursor: pointer;">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button style="background: none; border: none; color: #00b894; cursor: pointer;">
+                                    <i class="fas fa-print"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>PO-10231</td>
+                            <td>05 Oct 2023</td>
+                            <td>NatureFresh Organics</td>
+                            <td>Organic Honey</td>
+                            <td>50</td>
+                            <td>₹12,500</td>
+                            <td>₹2,250</td>
+                            <td>₹14,750</td>
+                            <td>Credit</td>
+                            <td><span class="status-badge due">Due</span></td>
+                            <td>
+                                <button style="background: none; border: none; color: #6c5ce7; cursor: pointer;">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button style="background: none; border: none; color: #00b894; cursor: pointer;">
+                                    <i class="fas fa-print"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Purchase Order Panel -->
+    <div class="new-purchase-panel">
+        <div class="panel-header">
+            <h2>Create New Purchase Order</h2>
+            <button class="close-panel-btn"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <div class="panel-content">
+            <form id="new-purchase-form" class="panel-form">
+                <div class="panel-section">
+                    <h3>Purchase Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="purchase-invoice">Purchase Invoice No.</label>
+                            <div class="id-input-group">
+                                <input type="text" id="purchase-invoice" value="PO-" placeholder="Auto-generated">
+                                <button type="button" class="generate-id-btn" title="Generate ID"><i class="fas fa-sync-alt"></i></button>
+                            </div>
+                            <small class="hint-text">Leave as is for auto-generation</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="purchase-date">Date of Purchase</label>
+                            <input type="date" id="purchase-date" value="">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="supplier-name">Supplier</label>
+                            <select id="supplier-name">
+                                <option value="">Select Supplier</option>
+                                <option value="VisualTech Electronics">VisualTech Electronics</option>
+                                <option value="FashionStyle Apparels">FashionStyle Apparels</option>
+                                <option value="ComfortPlus Furniture">ComfortPlus Furniture</option>
+                                <option value="HydroLife Products">HydroLife Products</option>
+                                <option value="NatureFresh Organics">NatureFresh Organics</option>
+                                <option value="TechGuard Accessories">TechGuard Accessories</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel-section">
+                    <div class="section-header">
+                        <h3>Products Purchased</h3>
+                        <button type="button" class="add-product-btn"><i class="fas fa-plus"></i> Add Product</button>
+                    </div>
+                    
+                    <div class="products-container">
+                        <div class="no-products-message">
+                            <p>No products added yet. Click "Add Product" to start adding products to this purchase order.</p>
+                        </div>
+                        
+                        <div class="product-entries">
+                            <!-- Product entries will be added here dynamically -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel-section">
+                    <h3>Payment Details</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="payment-mode">Payment Mode</label>
+                            <select id="payment-mode">
+                                <option value="">Select Payment Mode</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Credit">Credit</option>
+                                <option value="UPI">UPI</option>
+                                <option value="Bank Transfer">Bank Transfer</option>
+                                <option value="Cheque">Cheque</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="payment-status">Status</label>
+                            <select id="payment-status">
+                                <option value="Paid">Paid</option>
+                                <option value="Due">Due</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel-footer">
+                    <button type="button" class="cancel-btn">Cancel</button>
+                    <button type="submit" class="save-purchase-btn">Save Purchase</button>
+                </div>
+            </form>
+            
+            <div class="panel-preview">
+                <div class="preview-card">
+                    <div class="preview-header">
+                        <div class="invoice-preview-info">
+                            <h4>Purchase Order</h4>
+                            <span class="invoice-number-preview">PO-AUTO</span>
+                        </div>
+                        <div class="status-badge-preview due">Due</div>
+                    </div>
+                    
+                    <div class="preview-body">
+                        <div class="preview-row">
+                            <span class="preview-label"><i class="fas fa-calendar"></i> Date:</span>
+                            <span class="preview-value date-preview">Today</span>
+                        </div>
+                        <div class="preview-row">
+                            <span class="preview-label"><i class="fas fa-truck"></i> Supplier:</span>
+                            <span class="preview-value supplier-preview">Not selected</span>
+                        </div>
+                        <div class="preview-row">
+                            <span class="preview-label"><i class="fas fa-money-bill-wave"></i> Payment:</span>
+                            <span class="preview-value payment-preview">Not specified</span>
+                        </div>
+                        
+                        <div class="products-preview">
+                            <span class="preview-label"><i class="fas fa-box"></i> Products:</span>
+                            <div class="products-preview-list">
+                                <p class="no-products-selected">No products selected</p>
+                            </div>
+                        </div>
+                        
+                        <div class="purchase-summary-preview">
+                            <div class="summary-preview-row">
+                                <span class="summary-preview-label">Subtotal:</span>
+                                <span class="summary-preview-value subtotal-preview">₹0</span>
+                            </div>
+                            <div class="summary-preview-row">
+                                <span class="summary-preview-label">Tax:</span>
+                                <span class="summary-preview-value tax-preview">₹0</span>
+                            </div>
+                            <div class="summary-preview-row total">
+                                <span class="summary-preview-label">Total:</span>
+                                <span class="summary-preview-value total-preview">₹0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Product Entry Template (hidden, will be cloned via JavaScript) -->
+    <template id="product-entry-template">
+        <div class="product-entry">
+            <div class="product-entry-header">
+                <h4>Product <span class="product-number">1</span></h4>
+                <button type="button" class="remove-product-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="product-entry-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Product</label>
+                        <select class="product-select">
+                            <option value="">Select Product</option>
+                            <option value="4K Smart LED Television">4K Smart LED Television</option>
+                            <option value="Wireless Bluetooth Headphones">Wireless Bluetooth Headphones</option>
+                            <option value="Men's Formal Cotton Shirt">Men's Formal Cotton Shirt</option>
+                            <option value="Ergonomic Office Chair">Ergonomic Office Chair</option>
+                            <option value="Wooden Coffee Table">Wooden Coffee Table</option>
+                            <option value="Stainless Steel Water Bottle">Stainless Steel Water Bottle</option>
+                            <option value="Organic Honey">Organic Honey</option>
+                            <option value="Smartphone Case">Smartphone Case</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Quantity</label>
+                        <input type="number" class="product-quantity" min="1" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Purchase Price (₹)</label>
+                        <input type="number" class="product-price" min="0" step="0.01" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Tax Rate (%)</label>
+                        <input type="number" class="product-tax-rate" min="0" max="100" step="0.01" value="18">
+                    </div>
+                </div>
+                <div class="product-subtotal">
+                    <span>Subtotal: ₹<span class="product-subtotal-value">0</span></span>
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <!-- Panel Overlay -->
+    <div class="panel-overlay"></div>
+
+    <script>
+        // Set current date as the default value for the date input
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const formattedDate = today.toISOString().split('T')[0]; // YYYY-MM-DD format
+            const dateInput = document.getElementById('purchase-date');
+            if (dateInput) {
+                dateInput.value = formattedDate;
+            }
+            
+            // Initialize the purchase panel functionality
+            initPurchasePanel();
+        });
+
+        // Initialize the new purchase panel
+        function initPurchasePanel() {
+            const newPurchaseBtn = document.querySelector('.new-purchase-btn');
+            const purchasePanel = document.querySelector('.new-purchase-panel');
+            const panelOverlay = document.querySelector('.panel-overlay');
+            const closeBtn = document.querySelector('.close-panel-btn');
+            const cancelBtn = document.querySelector('.cancel-btn');
+            const addProductBtn = document.querySelector('.add-product-btn');
+            const productEntries = document.querySelector('.product-entries');
+            const noProductsMessage = document.querySelector('.no-products-message');
+            const purchaseForm = document.getElementById('new-purchase-form');
+            const generateIdBtn = document.querySelector('.generate-id-btn');
+            
+            // Make sure all elements exist before adding event listeners
+            if (!newPurchaseBtn || !purchasePanel || !panelOverlay) {
+                console.error('Required purchase panel elements not found');
+                return;
+            }
+            
+            // Ensure the overlay isn't blocking interactions on page load
+            panelOverlay.style.display = 'none';
+            setTimeout(() => {
+                panelOverlay.style.display = '';
+            }, 100);
+            
+            // Open panel when New Purchase Order button is clicked
+            newPurchaseBtn.addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevent event bubbling
+                openPanel();
+            });
+            
+            // Close panel when close button, cancel button, or overlay is clicked
+            if (closeBtn) closeBtn.addEventListener('click', closePanel);
+            if (cancelBtn) cancelBtn.addEventListener('click', closePanel);
+            
+            // Use capture phase for overlay clicks to ensure they're handled first
+            if (panelOverlay) {
+                panelOverlay.addEventListener('click', function(e) {
+                    // Only close if clicking directly on the overlay, not its children
+                    if (e.target === panelOverlay) {
+                        closePanel();
+                    }
+                }, true);
+            }
+            
+            // Add product entry when "Add Product" button is clicked
+            if (addProductBtn) {
+                addProductBtn.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Prevent event bubbling
+                    addProductEntry();
+                });
+            }
+            
+            // Generate new invoice number when button is clicked
+            generateIdBtn.addEventListener('click', generateInvoiceNumber);
+            
+            // Handle form submission
+            purchaseForm.addEventListener('submit', savePurchase);
+            
+            // Setup live preview updates
+            setupLivePreview();
+            
+            // Open panel function
+            function openPanel() {
+                purchasePanel.classList.add('open');
+                panelOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Prevent scrolling when panel is open
+            }
+            
+            // Close panel function
+            function closePanel() {
+                purchasePanel.classList.remove('open');
+                panelOverlay.classList.remove('active');
+                document.body.style.overflow = ''; // Re-enable scrolling
+                
+                // Ensure overlay is completely hidden to prevent interaction issues
+                panelOverlay.style.opacity = '0';
+                panelOverlay.style.visibility = 'hidden';
+                
+                // Ensure panel is completely off-screen
+                purchasePanel.style.right = '-800px';
+                
+                // Remove any inline styles after transition completes
+                setTimeout(() => {
+                    panelOverlay.removeAttribute('style');
+                    purchasePanel.removeAttribute('style');
+                }, 300); // Match transition duration
+                
+                resetForm();
+            }
+            
+            // Reset form function
+            function resetForm() {
+                purchaseForm.reset();
+                
+                // Clear product entries
+                productEntries.innerHTML = '';
+                noProductsMessage.style.display = 'block';
+                
+                // Reset preview
+                document.querySelector('.invoice-number-preview').textContent = 'PO-AUTO';
+                document.querySelector('.date-preview').textContent = 'Today';
+                document.querySelector('.supplier-preview').textContent = 'Not selected';
+                document.querySelector('.payment-preview').textContent = 'Not specified';
+                document.querySelector('.products-preview-list').innerHTML = '<p class="no-products-selected">No products selected</p>';
+                document.querySelector('.subtotal-preview').textContent = '₹0';
+                document.querySelector('.tax-preview').textContent = '₹0';
+                document.querySelector('.total-preview').textContent = '₹0';
+                document.querySelector('.status-badge-preview').className = 'status-badge-preview due';
+                document.querySelector('.status-badge-preview').textContent = 'Due';
+                
+                // Set current date
+                const today = new Date();
+                const formattedDate = today.toISOString().split('T')[0];
+                document.getElementById('purchase-date').value = formattedDate;
+            }
+            
+            // Generate invoice number function
+            function generateInvoiceNumber() {
+                const prefix = 'PO-';
+                const randomNum = Math.floor(10000 + Math.random() * 90000); // 5-digit number
+                document.getElementById('purchase-invoice').value = `${prefix}${randomNum}`;
+                updatePreview();
+            }
+            
+            // Add product entry function
+            function addProductEntry() {
+                // Hide no products message
+                noProductsMessage.style.display = 'none';
+                
+                // Clone the template
+                const template = document.getElementById('product-entry-template');
+                const productEntry = document.importNode(template.content, true).querySelector('.product-entry');
+                
+                // Add event listeners to the new product entry
+                const removeBtn = productEntry.querySelector('.remove-product-btn');
+                removeBtn.addEventListener('click', function() {
+                    productEntry.remove();
+                    if (productEntries.children.length === 0) {
+                        noProductsMessage.style.display = 'block';
+                    }
+                    updateProductNumbers();
+                    updatePreview();
+                });
+                
+                // Add change event listeners to calculate subtotal
+                const quantityInput = productEntry.querySelector('.product-quantity');
+                const priceInput = productEntry.querySelector('.product-price');
+                const taxRateInput = productEntry.querySelector('.product-tax-rate');
+                const productSelect = productEntry.querySelector('.product-select');
+                
+                // Calculate subtotal when inputs change
+                [quantityInput, priceInput, taxRateInput].forEach(input => {
+                    input.addEventListener('input', function() {
+                        updateProductSubtotal(productEntry);
+                        updatePreview();
+                    });
+                });
+                
+                // Update preview when product changes
+                productSelect.addEventListener('change', updatePreview);
+                
+                // Append the new product entry
+                productEntries.appendChild(productEntry);
+                
+                // Update product numbers and preview
+                updateProductNumbers();
+                updatePreview();
+                
+                // Set default values based on product selection
+                productSelect.addEventListener('change', function() {
+                    const selectedProduct = this.value;
+                    if (selectedProduct) {
+                        // Set default prices based on product
+                        let defaultPrice = 0;
+                        
+                        switch(selectedProduct) {
+                            case '4K Smart LED Television':
+                                defaultPrice = 28500;
+                                break;
+                            case 'Wireless Bluetooth Headphones':
+                                defaultPrice = 1800;
+                                break;
+                            case 'Men\'s Formal Cotton Shirt':
+                                defaultPrice = 550;
+                                break;
+                            case 'Ergonomic Office Chair':
+                                defaultPrice = 4200;
+                                break;
+                            case 'Wooden Coffee Table':
+                                defaultPrice = 3500;
+                                break;
+                            case 'Stainless Steel Water Bottle':
+                                defaultPrice = 320;
+                                break;
+                            case 'Organic Honey':
+                                defaultPrice = 220;
+                                break;
+                            case 'Smartphone Case':
+                                defaultPrice = 180;
+                                break;
+                        }
+                        
+                        priceInput.value = defaultPrice;
+                        updateProductSubtotal(productEntry);
+                        updatePreview();
+                    }
+                });
+            }
+            
+            // Update product numbers function
+            function updateProductNumbers() {
+                const productEntryElements = productEntries.querySelectorAll('.product-entry');
+                productEntryElements.forEach((entry, index) => {
+                    entry.querySelector('.product-number').textContent = index + 1;
+                });
+            }
+            
+            // Update product subtotal function
+            function updateProductSubtotal(productEntry) {
+                const quantity = parseFloat(productEntry.querySelector('.product-quantity').value) || 0;
+                const price = parseFloat(productEntry.querySelector('.product-price').value) || 0;
+                const taxRate = parseFloat(productEntry.querySelector('.product-tax-rate').value) || 0;
+                
+                const subtotal = quantity * price;
+                productEntry.querySelector('.product-subtotal-value').textContent = subtotal.toFixed(2);
+            }
+            
+            // Setup live preview function
+            function setupLivePreview() {
+                // Invoice number
+                document.getElementById('purchase-invoice').addEventListener('input', updatePreview);
+                
+                // Date
+                document.getElementById('purchase-date').addEventListener('change', updatePreview);
+                
+                // Supplier
+                document.getElementById('supplier-name').addEventListener('change', updatePreview);
+                
+                // Payment mode
+                document.getElementById('payment-mode').addEventListener('change', updatePreview);
+                
+                // Status
+                document.getElementById('payment-status').addEventListener('change', updatePreview);
+            }
+            
+            // Update preview function
+            function updatePreview() {
+                // Update invoice number
+                const invoiceInput = document.getElementById('purchase-invoice').value;
+                document.querySelector('.invoice-number-preview').textContent = invoiceInput || 'PO-AUTO';
+                
+                // Update date
+                const dateInput = document.getElementById('purchase-date').value;
+                if (dateInput) {
+                    const date = new Date(dateInput);
+                    const options = { day: 'numeric', month: 'short', year: 'numeric' };
+                    document.querySelector('.date-preview').textContent = date.toLocaleDateString('en-IN', options);
+                } else {
+                    document.querySelector('.date-preview').textContent = 'Today';
+                }
+                
+                // Update supplier
+                const supplierInput = document.getElementById('supplier-name').value;
+                document.querySelector('.supplier-preview').textContent = supplierInput || 'Not selected';
+                
+                // Update payment mode
+                const paymentModeInput = document.getElementById('payment-mode').value;
+                const paymentStatusInput = document.getElementById('payment-status').value;
+                const paymentText = paymentModeInput ? `${paymentModeInput} (${paymentStatusInput})` : 'Not specified';
+                document.querySelector('.payment-preview').textContent = paymentText;
+                
+                // Update status badge
+                const statusBadge = document.querySelector('.status-badge-preview');
+                statusBadge.textContent = paymentStatusInput || 'Due';
+                statusBadge.className = `status-badge-preview ${paymentStatusInput ? paymentStatusInput.toLowerCase() : 'due'}`;
+                
+                // Update products preview
+                const productEntryElements = document.querySelectorAll('.product-entry');
+                const productsPreviewList = document.querySelector('.products-preview-list');
+                
+                if (productEntryElements.length === 0) {
+                    productsPreviewList.innerHTML = '<p class="no-products-selected">No products selected</p>';
+                } else {
+                    let productsHTML = '';
+                    let subtotal = 0;
+                    let totalTax = 0;
+                    
+                    productEntryElements.forEach((entry) => {
+                        const productSelect = entry.querySelector('.product-select');
+                        const productName = productSelect.value;
+                        if (productName) {
+                            const quantity = parseFloat(entry.querySelector('.product-quantity').value) || 0;
+                            const price = parseFloat(entry.querySelector('.product-price').value) || 0;
+                            const taxRate = parseFloat(entry.querySelector('.product-tax-rate').value) || 0;
+                            
+                            const itemSubtotal = quantity * price;
+                            const itemTax = itemSubtotal * (taxRate / 100);
+                            
+                            subtotal += itemSubtotal;
+                            totalTax += itemTax;
+                            
+                            productsHTML += `<p>${productName} x ${quantity} @ ₹${price.toFixed(2)} = ₹${itemSubtotal.toFixed(2)}</p>`;
+                        }
+                    });
+                    
+                    productsPreviewList.innerHTML = productsHTML || '<p class="no-products-selected">No valid products selected</p>';
+                    
+                    // Update totals
+                    const totalAmount = subtotal + totalTax;
+                    document.querySelector('.subtotal-preview').textContent = `₹${subtotal.toFixed(2)}`;
+                    document.querySelector('.tax-preview').textContent = `₹${totalTax.toFixed(2)}`;
+                    document.querySelector('.total-preview').textContent = `₹${totalAmount.toFixed(2)}`;
+                }
+            }
+            
+            // Save purchase function
+            function savePurchase(event) {
+                event.preventDefault();
+                
+                // Validate form
+                const invoiceInput = document.getElementById('purchase-invoice').value;
+                const dateInput = document.getElementById('purchase-date').value;
+                const supplierInput = document.getElementById('supplier-name').value;
+                const paymentModeInput = document.getElementById('payment-mode').value;
+                const paymentStatusInput = document.getElementById('payment-status').value;
+                const productEntryElements = document.querySelectorAll('.product-entry');
+                
+                // Check required fields
+                if (!invoiceInput) {
+                    alert('Please enter an invoice number');
+                    return;
+                }
+                
+                if (!dateInput) {
+                    alert('Please select a date');
+                    return;
+                }
+                
+                if (!supplierInput) {
+                    alert('Please select a supplier');
+                    return;
+                }
+                
+                if (!paymentModeInput) {
+                    alert('Please select a payment mode');
+                    return;
+                }
+                
+                if (productEntryElements.length === 0) {
+                    alert('Please add at least one product');
+                    return;
+                }
+                
+                // Check if products are selected
+                let hasValidProducts = false;
+                productEntryElements.forEach((entry) => {
+                    const productSelect = entry.querySelector('.product-select');
+                    if (productSelect.value) {
+                        hasValidProducts = true;
+                    }
+                });
+                
+                if (!hasValidProducts) {
+                    alert('Please select at least one product');
+                    return;
+                }
+                
+                // If all validation passes, show success message
+                alert('Purchase order saved successfully!');
+                closePanel();
+                
+                // In a real application, this would send the data to a server
+                // and possibly update the table with the new purchase order
+            }
+        }
+    </script>
+</body>
+</html> 

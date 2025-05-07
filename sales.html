@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales | WIMS - Warehouse Inventory Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="sales.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2>WIMS<span>System</span></h2>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-th-large"></i> Dashboard</a></li>
+                    <li><a href="products.html"><i class="fas fa-box"></i> Products</a></li>
+                    <li><a href="customers.html"><i class="fas fa-users"></i> Customers</a></li>
+                    <li class="active"><a href="sales.html"><i class="fas fa-shopping-cart"></i> Sales</a></li>
+                    <li><a href="#"><i class="fas fa-truck"></i> Supplier</a></li>
+                    <li><a href="#"><i class="fas fa-shopping-bag"></i> Purchase</a></li>
+                    <li><a href="#"><i class="fas fa-file-invoice-dollar"></i> Invoice & Bills</a></li>
+                    <li><a href="#"><i class="fas fa-exchange-alt"></i> Stock Transfer</a></li>
+                    <li><a href="#"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                </ul>
+            </nav>
+            
+            <div class="mobile-app-promo">
+                <div class="promo-icon"><i class="fas fa-mobile-alt"></i></div>
+                <div class="promo-text">
+                    <p>Try our mobile app</p>
+                    <a href="#">Download Now</a>
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <ul>
+                    <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                    <li><a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Navigation -->
+            <div class="top-nav">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                
+                <div class="user-actions">
+                    <div class="notification">
+                        <i class="far fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="messages">
+                        <i class="far fa-envelope"></i>
+                        <span class="badge">5</span>
+                    </div>
+                    <div class="user-profile">
+                        <img src="https://randomuser.me/api/portraits/men/44.jpg" alt="User Profile">
+                        <div class="dropdown">
+                            <span>John Doe</span>
+                            <i class="fas fa-chevron-down"></i>
+                            <div class="dropdown-content">
+                                <a href="#"><i class="fas fa-user"></i> Profile</a>
+                                <a href="#"><i class="fas fa-cog"></i> Settings</a>
+                                <a href="#"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sales Content -->
+            <div class="sales-content">
+                <div class="sales-header">
+                    <h1>Sales Transactions</h1>
+                    <div class="sales-actions">
+                        <div class="filter-options">
+                            <div class="date-range">
+                                <label for="date-from">From:</label>
+                                <input type="date" id="date-from">
+                                <label for="date-to">To:</label>
+                                <input type="date" id="date-to">
+                            </div>
+                            <select id="customer-filter">
+                                <option value="">All Customers</option>
+                                <option value="Vikram Sharma">Vikram Sharma</option>
+                                <option value="Priya Patel">Priya Patel</option>
+                                <option value="Raj Kumar Textiles">Raj Kumar Textiles</option>
+                                <option value="Arun Mehta">Arun Mehta</option>
+                                <option value="GreenTech Solutions">GreenTech Solutions</option>
+                            </select>
+                            <select id="payment-mode-filter">
+                                <option value="">All Payment Modes</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Card">Card</option>
+                                <option value="UPI">UPI</option>
+                                <option value="Credit">Credit</option>
+                                <option value="Bank Transfer">Bank Transfer</option>
+                            </select>
+                            <div class="search-sale">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="sale-search" placeholder="Search by invoice...">
+                            </div>
+                        </div>
+                        <div class="view-toggle">
+                            <button class="toggle-btn active" data-view="table"><i class="fas fa-table"></i></button>
+                            <button class="toggle-btn" data-view="card"><i class="fas fa-th-large"></i></button>
+                        </div>
+                        <button class="new-sale-btn"><i class="fas fa-plus"></i> New Sale</button>
+                    </div>
+                </div>
+                
+                <!-- Sale Table View -->
+                <div class="view-container table-view active">
+                    <div class="sales-table-container">
+                        <table class="sales-table">
+                            <thead>
+                                <tr>
+                                    <th>Invoice No.</th>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>Products</th>
+                                    <th>Quantity</th>
+                                    <th>Selling Price</th>
+                                    <th>Discount</th>
+                                    <th>Tax (GST)</th>
+                                    <th>Total Amount</th>
+                                    <th>Payment Mode</th>
+                                    <th>Salesperson</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><a href="#" class="invoice-link">INV-10235</a></td>
+                                    <td>15 Oct 2023</td>
+                                    <td>Vikram Sharma</td>
+                                    <td>
+                                        <button class="products-toggle">View Products</button>
+                                        <div class="products-details">
+                                            <p>4K Smart LED Television x1</p>
+                                            <p>Wireless Bluetooth Headphones x2</p>
+                                        </div>
+                                    </td>
+                                    <td>3</td>
+                                    <td>₹39,997</td>
+                                    <td>₹2,000</td>
+                                    <td>₹6,839</td>
+                                    <td class="total-amount">₹44,836</td>
+                                    <td><span class="payment-mode card">Card</span></td>
+                                    <td>Rahul Verma</td>
+                                    <td class="actions">
+                                        <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn print"><i class="fas fa-print"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#" class="invoice-link">INV-10234</a></td>
+                                    <td>14 Oct 2023</td>
+                                    <td>Priya Patel</td>
+                                    <td>
+                                        <button class="products-toggle">View Products</button>
+                                        <div class="products-details">
+                                            <p>Men's Formal Cotton Shirt x2</p>
+                                            <p>Stainless Steel Water Bottle x1</p>
+                                        </div>
+                                    </td>
+                                    <td>3</td>
+                                    <td>₹2,497</td>
+                                    <td>₹200</td>
+                                    <td>₹413</td>
+                                    <td class="total-amount">₹2,710</td>
+                                    <td><span class="payment-mode upi">UPI</span></td>
+                                    <td>Anjali Gupta</td>
+                                    <td class="actions">
+                                        <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn print"><i class="fas fa-print"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#" class="invoice-link">INV-10233</a></td>
+                                    <td>13 Oct 2023</td>
+                                    <td>Raj Kumar Textiles</td>
+                                    <td>
+                                        <button class="products-toggle">View Products</button>
+                                        <div class="products-details">
+                                            <p>Ergonomic Office Chair x10</p>
+                                        </div>
+                                    </td>
+                                    <td>10</td>
+                                    <td>₹59,990</td>
+                                    <td>₹5,000</td>
+                                    <td>₹9,897</td>
+                                    <td class="total-amount">₹64,887</td>
+                                    <td><span class="payment-mode credit">Credit</span></td>
+                                    <td>Suresh Kumar</td>
+                                    <td class="actions">
+                                        <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn print"><i class="fas fa-print"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#" class="invoice-link">INV-10232</a></td>
+                                    <td>12 Oct 2023</td>
+                                    <td>Arun Mehta</td>
+                                    <td>
+                                        <button class="products-toggle">View Products</button>
+                                        <div class="products-details">
+                                            <p>Stainless Steel Water Bottle x3</p>
+                                            <p>Organic Honey x2</p>
+                                        </div>
+                                    </td>
+                                    <td>5</td>
+                                    <td>₹2,197</td>
+                                    <td>₹0</td>
+                                    <td>₹395</td>
+                                    <td class="total-amount">₹2,592</td>
+                                    <td><span class="payment-mode cash">Cash</span></td>
+                                    <td>Rahul Verma</td>
+                                    <td class="actions">
+                                        <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn print"><i class="fas fa-print"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#" class="invoice-link">INV-10231</a></td>
+                                    <td>10 Oct 2023</td>
+                                    <td>GreenTech Solutions</td>
+                                    <td>
+                                        <button class="products-toggle">View Products</button>
+                                        <div class="products-details">
+                                            <p>4K Smart LED Television x3</p>
+                                            <p>Wireless Bluetooth Headphones x15</p>
+                                            <p>Smartphone Case x30</p>
+                                        </div>
+                                    </td>
+                                    <td>48</td>
+                                    <td>₹122,967</td>
+                                    <td>₹10,000</td>
+                                    <td>₹20,334</td>
+                                    <td class="total-amount">₹133,301</td>
+                                    <td><span class="payment-mode bank">Bank Transfer</span></td>
+                                    <td>Neha Singh</td>
+                                    <td class="actions">
+                                        <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn print"><i class="fas fa-print"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#" class="invoice-link">INV-10230</a></td>
+                                    <td>09 Oct 2023</td>
+                                    <td>Meera Reddy</td>
+                                    <td>
+                                        <button class="products-toggle">View Products</button>
+                                        <div class="products-details">
+                                            <p>Wooden Coffee Table x1</p>
+                                        </div>
+                                    </td>
+                                    <td>1</td>
+                                    <td>₹5,299</td>
+                                    <td>₹300</td>
+                                    <td>₹900</td>
+                                    <td class="total-amount">₹5,899</td>
+                                    <td><span class="payment-mode upi">UPI</span></td>
+                                    <td>Anjali Gupta</td>
+                                    <td class="actions">
+                                        <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn print"><i class="fas fa-print"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#" class="invoice-link">INV-10229</a></td>
+                                    <td>08 Oct 2023</td>
+                                    <td>Sunrise Enterprises</td>
+                                    <td>
+                                        <button class="products-toggle">View Products</button>
+                                        <div class="products-details">
+                                            <p>Wireless Bluetooth Headphones x30</p>
+                                            <p>Smartphone Case x50</p>
+                                        </div>
+                                    </td>
+                                    <td>80</td>
+                                    <td>₹89,920</td>
+                                    <td>₹8,000</td>
+                                    <td>₹14,746</td>
+                                    <td class="total-amount">₹96,666</td>
+                                    <td><span class="payment-mode credit">Credit</span></td>
+                                    <td>Suresh Kumar</td>
+                                    <td class="actions">
+                                        <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn print"><i class="fas fa-print"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Sale Card View -->
+                <div class="view-container card-view">
+                    <div class="sales-cards">
+                        <!-- Sale Card 1 -->
+                        <div class="sale-card">
+                            <div class="card-header">
+                                <div class="invoice-info">
+                                    <h3><a href="#" class="invoice-link">INV-10235</a></h3>
+                                    <span class="sale-date">15 Oct 2023</span>
+                                </div>
+                                <div class="payment-badge card">Card</div>
+                            </div>
+                            <div class="card-body">
+                                <div class="customer-info">
+                                    <span class="info-label"><i class="fas fa-user"></i> Customer:</span>
+                                    <span class="info-value">Vikram Sharma</span>
+                                </div>
+                                <div class="products-list">
+                                    <span class="info-label"><i class="fas fa-box"></i> Products:</span>
+                                    <ul>
+                                        <li>4K Smart LED Television x1</li>
+                                        <li>Wireless Bluetooth Headphones x2</li>
+                                    </ul>
+                                </div>
+                                <div class="sale-summary">
+                                    <div class="summary-row">
+                                        <span class="summary-label">Selling Price:</span>
+                                        <span class="summary-value">₹39,997</span>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span class="summary-label">Discount:</span>
+                                        <span class="summary-value discount">-₹2,000</span>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span class="summary-label">Tax (GST):</span>
+                                        <span class="summary-value tax">+₹6,839</span>
+                                    </div>
+                                    <div class="summary-row total">
+                                        <span class="summary-label">Total Amount:</span>
+                                        <span class="summary-value">₹44,836</span>
+                                    </div>
+                                </div>
+                                <div class="salesperson-info">
+                                    <span class="info-label"><i class="fas fa-user-tie"></i> Salesperson:</span>
+                                    <span class="info-value">Rahul Verma</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button class="card-btn view"><i class="fas fa-eye"></i> View Details</button>
+                                <button class="card-btn print"><i class="fas fa-print"></i> Print</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Sale Card 2 -->
+                        <div class="sale-card">
+                            <div class="card-header">
+                                <div class="invoice-info">
+                                    <h3><a href="#" class="invoice-link">INV-10234</a></h3>
+                                    <span class="sale-date">14 Oct 2023</span>
+                                </div>
+                                <div class="payment-badge upi">UPI</div>
+                            </div>
+                            <div class="card-body">
+                                <div class="customer-info">
+                                    <span class="info-label"><i class="fas fa-user"></i> Customer:</span>
+                                    <span class="info-value">Priya Patel</span>
+                                </div>
+                                <div class="products-list">
+                                    <span class="info-label"><i class="fas fa-box"></i> Products:</span>
+                                    <ul>
+                                        <li>Men's Formal Cotton Shirt x2</li>
+                                        <li>Stainless Steel Water Bottle x1</li>
+                                    </ul>
+                                </div>
+                                <div class="sale-summary">
+                                    <div class="summary-row">
+                                        <span class="summary-label">Selling Price:</span>
+                                        <span class="summary-value">₹2,497</span>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span class="summary-label">Discount:</span>
+                                        <span class="summary-value discount">-₹200</span>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span class="summary-label">Tax (GST):</span>
+                                        <span class="summary-value tax">+₹413</span>
+                                    </div>
+                                    <div class="summary-row total">
+                                        <span class="summary-label">Total Amount:</span>
+                                        <span class="summary-value">₹2,710</span>
+                                    </div>
+                                </div>
+                                <div class="salesperson-info">
+                                    <span class="info-label"><i class="fas fa-user-tie"></i> Salesperson:</span>
+                                    <span class="info-value">Anjali Gupta</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button class="card-btn view"><i class="fas fa-eye"></i> View Details</button>
+                                <button class="card-btn print"><i class="fas fa-print"></i> Print</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Sale Card 3 -->
+                        <div class="sale-card">
+                            <div class="card-header">
+                                <div class="invoice-info">
+                                    <h3><a href="#" class="invoice-link">INV-10233</a></h3>
+                                    <span class="sale-date">13 Oct 2023</span>
+                                </div>
+                                <div class="payment-badge credit">Credit</div>
+                            </div>
+                            <div class="card-body">
+                                <div class="customer-info">
+                                    <span class="info-label"><i class="fas fa-user"></i> Customer:</span>
+                                    <span class="info-value">Raj Kumar Textiles</span>
+                                </div>
+                                <div class="products-list">
+                                    <span class="info-label"><i class="fas fa-box"></i> Products:</span>
+                                    <ul>
+                                        <li>Ergonomic Office Chair x10</li>
+                                    </ul>
+                                </div>
+                                <div class="sale-summary">
+                                    <div class="summary-row">
+                                        <span class="summary-label">Selling Price:</span>
+                                        <span class="summary-value">₹59,990</span>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span class="summary-label">Discount:</span>
+                                        <span class="summary-value discount">-₹5,000</span>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span class="summary-label">Tax (GST):</span>
+                                        <span class="summary-value tax">+₹9,897</span>
+                                    </div>
+                                    <div class="summary-row total">
+                                        <span class="summary-label">Total Amount:</span>
+                                        <span class="summary-value">₹64,887</span>
+                                    </div>
+                                </div>
+                                <div class="salesperson-info">
+                                    <span class="info-label"><i class="fas fa-user-tie"></i> Salesperson:</span>
+                                    <span class="info-value">Suresh Kumar</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button class="card-btn view"><i class="fas fa-eye"></i> View Details</button>
+                                <button class="card-btn print"><i class="fas fa-print"></i> Print</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Additional cards (only showing 3 for brevity, would have more in actual implementation) -->
+                    </div>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="pagination">
+                    <button class="page-btn prev"><i class="fas fa-chevron-left"></i></button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <span class="page-dots">...</span>
+                    <button class="page-btn">9</button>
+                    <button class="page-btn next"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Sale Panel -->
+    <div class="new-sale-panel">
+        <div class="panel-header">
+            <h2>Create New Sale</h2>
+            <button class="close-panel-btn"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <div class="panel-content">
+            <div class="panel-form">
+                <div class="panel-section">
+                    <h3>Sale Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="invoice-number">Invoice Number</label>
+                            <input type="text" id="invoice-number" value="" readonly>
+                            <small>Auto-generated</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="sale-date">Date of Sale</label>
+                            <input type="date" id="sale-date">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="customer-name">Customer</label>
+                            <select id="customer-name">
+                                <option value="">Select a customer</option>
+                                <option value="Vikram Sharma">Vikram Sharma</option>
+                                <option value="Priya Patel">Priya Patel</option>
+                                <option value="Raj Kumar Textiles">Raj Kumar Textiles</option>
+                                <option value="Arun Mehta">Arun Mehta</option>
+                                <option value="GreenTech Solutions">GreenTech Solutions</option>
+                                <option value="Meera Reddy">Meera Reddy</option>
+                                <option value="Sunrise Enterprises">Sunrise Enterprises</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="salesperson">Salesperson</label>
+                            <select id="salesperson">
+                                <option value="">Select salesperson</option>
+                                <option value="Rahul Verma">Rahul Verma</option>
+                                <option value="Anjali Gupta">Anjali Gupta</option>
+                                <option value="Suresh Kumar">Suresh Kumar</option>
+                                <option value="Neha Singh">Neha Singh</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel-section">
+                    <div class="section-header">
+                        <h3>Products</h3>
+                        <button class="add-product-btn"><i class="fas fa-plus"></i> Add Product</button>
+                    </div>
+                    
+                    <div class="products-container">
+                        <div class="no-products-message">Click "Add Product" to select products for this sale.</div>
+                        
+                        <div class="product-entries"></div>
+                        
+                        <div class="product-entry-template" style="display: none;">
+                            <div class="product-entry">
+                                <div class="product-entry-header">
+                                    <h4>Product 1</h4>
+                                    <button class="remove-product-btn"><i class="fas fa-trash"></i></button>
+                                </div>
+                                <div class="product-entry-body">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>Product</label>
+                                            <select class="product-select">
+                                                <option value="">Select product</option>
+                                                <option value="PRD-001" data-price="2499" data-name="Wireless Bluetooth Headphones">Wireless Bluetooth Headphones</option>
+                                                <option value="PRD-002" data-price="34999" data-name="4K Smart LED Television">4K Smart LED Television</option>
+                                                <option value="PRD-003" data-price="999" data-name="Men's Formal Cotton Shirt">Men's Formal Cotton Shirt</option>
+                                                <option value="PRD-004" data-price="5999" data-name="Ergonomic Office Chair">Ergonomic Office Chair</option>
+                                                <option value="PRD-005" data-price="499" data-name="Stainless Steel Water Bottle">Stainless Steel Water Bottle</option>
+                                                <option value="PRD-006" data-price="350" data-name="Organic Honey">Organic Honey</option>
+                                                <option value="PRD-007" data-price="299" data-name="Smartphone Case">Smartphone Case</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>Quantity</label>
+                                            <input type="number" class="product-quantity" value="1" min="1">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Unit Price (₹)</label>
+                                            <input type="number" class="product-price" value="0.00" step="0.01">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Discount (₹)</label>
+                                            <input type="number" class="product-discount" value="0.00" step="0.01" min="0">
+                                        </div>
+                                    </div>
+                                    <div class="product-subtotal">
+                                        <span class="subtotal-label">Subtotal:</span>
+                                        <span class="subtotal-value">₹0.00</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel-section">
+                    <h3>Payment Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="payment-mode">Payment Mode</label>
+                            <select id="payment-mode">
+                                <option value="">Select payment mode</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Card">Card</option>
+                                <option value="UPI">UPI</option>
+                                <option value="Credit">Credit</option>
+                                <option value="Bank Transfer">Bank Transfer</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tax-rate">Tax Rate (%)</label>
+                            <input type="number" id="tax-rate" value="18" min="0" max="28" step="0.01">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel-preview">
+                <div class="preview-card">
+                    <div class="preview-header">
+                        <div class="invoice-preview-info">
+                            <h4>New Sale</h4>
+                            <span class="invoice-number-preview">INV-Auto</span>
+                        </div>
+                        <div class="payment-badge-preview">—</div>
+                    </div>
+                    <div class="preview-body">
+                        <div class="preview-row">
+                            <span class="preview-label"><i class="fas fa-calendar"></i> Date:</span>
+                            <span class="preview-value date-preview">Today</span>
+                        </div>
+                        <div class="preview-row">
+                            <span class="preview-label"><i class="fas fa-user"></i> Customer:</span>
+                            <span class="preview-value customer-preview">Not selected</span>
+                        </div>
+                        <div class="preview-row">
+                            <span class="preview-label"><i class="fas fa-user-tie"></i> Salesperson:</span>
+                            <span class="preview-value salesperson-preview">Not selected</span>
+                        </div>
+                        
+                        <div class="products-preview">
+                            <span class="preview-label"><i class="fas fa-box"></i> Products:</span>
+                            <div class="products-preview-list">
+                                <p class="no-products-selected">No products selected</p>
+                            </div>
+                        </div>
+                        
+                        <div class="sale-summary-preview">
+                            <div class="summary-preview-row">
+                                <span class="summary-preview-label">Subtotal:</span>
+                                <span class="summary-preview-value subtotal-preview">₹0.00</span>
+                            </div>
+                            <div class="summary-preview-row">
+                                <span class="summary-preview-label">Discount:</span>
+                                <span class="summary-preview-value discount-preview">-₹0.00</span>
+                            </div>
+                            <div class="summary-preview-row">
+                                <span class="summary-preview-label">Tax (<span class="tax-rate-preview">18</span>%):</span>
+                                <span class="summary-preview-value tax-preview">+₹0.00</span>
+                            </div>
+                            <div class="summary-preview-row total">
+                                <span class="summary-preview-label">Total Amount:</span>
+                                <span class="summary-preview-value total-preview">₹0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="panel-footer">
+            <button class="cancel-btn">Cancel</button>
+            <button class="save-sale-btn">Save Sale</button>
+        </div>
+    </div>
+    
+    <div class="panel-overlay"></div>
+
+    <script src="script.js"></script>
+    <script src="sales.js"></script>
+</body>
+</html> 

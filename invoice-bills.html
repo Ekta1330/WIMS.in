@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice & Bills | WIMS - Warehouse Inventory Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="invoice-bills.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2>WIMS<span>System</span></h2>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-th-large"></i> Dashboard</a></li>
+                    <li><a href="products.html"><i class="fas fa-box"></i> Products</a></li>
+                    <li><a href="customers.html"><i class="fas fa-users"></i> Customers</a></li>
+                    <li><a href="sales.html"><i class="fas fa-shopping-cart"></i> Sales</a></li>
+                    <li><a href="suppliers.html"><i class="fas fa-truck"></i> Supplier</a></li>
+                    <li><a href="purchases-new.html"><i class="fas fa-shopping-bag"></i> Purchase</a></li>
+                    <li class="active"><a href="invoice-bills.html"><i class="fas fa-file-invoice-dollar"></i> Invoice & Bills</a></li>
+                    <li><a href="stock-transfer.html"><i class="fas fa-exchange-alt"></i> Stock Transfer</a></li>
+                    <li><a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                </ul>
+            </nav>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Navigation -->
+            <div class="top-nav">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                
+                <div class="user-actions">
+                    <div class="notification">
+                        <i class="far fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="messages">
+                        <i class="far fa-envelope"></i>
+                        <span class="badge">5</span>
+                    </div>
+                    <div class="user-profile">
+                        <img src="https://randomuser.me/api/portraits/women/33.jpg" alt="User Profile">
+                        <div class="dropdown">
+                            <span>Ekta Sandhu</span>
+                            <i class="fas fa-chevron-down"></i>
+                            <div class="dropdown-content">
+                                <a href="#"><i class="fas fa-user"></i> Profile</a>
+                                <a href="#"><i class="fas fa-cog"></i> Settings</a>
+                                <a href="#"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Invoice & Bills Content -->
+            <div class="invoice-bills-content">
+                <div class="invoice-bills-header">
+                    <h1>Invoice & Bills Management</h1>
+                    <div class="invoice-bills-actions">
+                        <div class="filter-options">
+                            <select id="invoice-type-filter">
+                                <option value="">All Types</option>
+                                <option value="sales">Sales Invoices</option>
+                                <option value="purchase">Purchase Bills</option>
+                            </select>
+                            <select id="payment-status-filter">
+                                <option value="">All Payment Status</option>
+                                <option value="paid">Paid</option>
+                                <option value="unpaid">Unpaid</option>
+                                <option value="partial">Partially Paid</option>
+                            </select>
+                            <div class="date-range">
+                                <label for="date-from">From:</label>
+                                <input type="date" id="date-from">
+                                <label for="date-to">To:</label>
+                                <input type="date" id="date-to">
+                            </div>
+                            <div class="search-invoice">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="invoice-search" placeholder="Search invoices...">
+                            </div>
+                        </div>
+                        <div class="view-toggle">
+                            <button class="toggle-btn active" data-view="table"><i class="fas fa-table"></i></button>
+                            <button class="toggle-btn" data-view="card"><i class="fas fa-th-large"></i></button>
+                        </div>
+                        <button class="create-invoice-btn"><i class="fas fa-plus"></i> Create New Invoice</button>
+                    </div>
+                </div>
+                
+                <!-- Invoice Table View -->
+                <div class="view-container table-view active">
+                    <div class="invoice-table-container">
+                        <table class="invoice-table">
+                            <thead>
+                                <tr>
+                                    <th>Invoice #</th>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Customer/Supplier</th>
+                                    <th>Products</th>
+                                    <th>Subtotal</th>
+                                    <th>Tax</th>
+                                    <th>Discount</th>
+                                    <th>Grand Total</th>
+                                    <th>Payment Mode</th>
+                                    <th>Status</th>
+                                    <th>Due Date</th>
+                                    <th>Handler</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Invoices will be loaded here -->
+                            </tbody>
+                        </table>
+                        
+                        <!-- Loading Spinner -->
+                        <div class="loading-spinner">
+                            <div class="spinner"></div>
+                            <p>Loading invoices...</p>
+                        </div>
+                        
+                        <!-- Empty State -->
+                        <div class="empty-state" style="display: none;">
+                            <div class="empty-icon"><i class="fas fa-file-invoice"></i></div>
+                            <h3>No Invoices Found</h3>
+                            <p>There are no invoices matching your filters or search criteria.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Invoice Card View -->
+                <div class="view-container card-view">
+                    <div class="invoice-cards">
+                        <!-- Invoices in card format will be loaded here -->
+                    </div>
+                    
+                    <!-- Loading Spinner -->
+                    <div class="loading-spinner">
+                        <div class="spinner"></div>
+                        <p>Loading invoices...</p>
+                    </div>
+                    
+                    <!-- Empty State -->
+                    <div class="empty-state" style="display: none;">
+                        <div class="empty-icon"><i class="fas fa-file-invoice"></i></div>
+                        <h3>No Invoices Found</h3>
+                        <p>There are no invoices matching your filters or search criteria.</p>
+                    </div>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="pagination">
+                    <button class="page-btn prev"><i class="fas fa-chevron-left"></i></button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <span class="page-dots">...</span>
+                    <button class="page-btn">10</button>
+                    <button class="page-btn next"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- PDF Generation Toast Message -->
+    <div class="toast-container">
+        <div class="toast pdf-generating">
+            <div class="toast-icon"><i class="fas fa-cog fa-spin"></i></div>
+            <div class="toast-content">
+                <p>Generating PDF invoice...</p>
+            </div>
+        </div>
+        <div class="toast pdf-ready">
+            <div class="toast-icon success"><i class="fas fa-check-circle"></i></div>
+            <div class="toast-content">
+                <p>PDF generated successfully!</p>
+            </div>
+        </div>
+        <div class="toast pdf-error">
+            <div class="toast-icon error"><i class="fas fa-exclamation-circle"></i></div>
+            <div class="toast-content">
+                <p>Error generating PDF. Please try again.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoice Detail Modal -->
+    <div class="invoice-detail-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Invoice Details</h2>
+                <button class="close-modal-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <!-- Invoice details will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button class="edit-invoice-btn">Edit Invoice</button>
+                <button class="generate-pdf-btn">Generate PDF</button>
+                <button class="close-btn">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Create Invoice Modal -->
+    <div class="create-invoice-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Invoice</h2>
+                <button class="close-modal-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="create-invoice-form">
+                    <!-- Tab Navigation -->
+                    <div class="invoice-tabs">
+                        <button type="button" class="tab-btn active" data-tab="customer-details">
+                            <i class="fas fa-user"></i>
+                            <span>Customer Details</span>
+                        </button>
+                        <button type="button" class="tab-btn" data-tab="item-list">
+                            <i class="fas fa-list"></i>
+                            <span>Item List</span>
+                        </button>
+                        <button type="button" class="tab-btn" data-tab="rates-discounts">
+                            <i class="fas fa-percentage"></i>
+                            <span>Rates & Discounts</span>
+                        </button>
+                        <button type="button" class="tab-btn" data-tab="preview-submit">
+                            <i class="fas fa-eye"></i>
+                            <span>Preview & Submit</span>
+                        </button>
+                    </div>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content-container">
+                        <!-- Customer Details Tab -->
+                        <div class="tab-content active" id="customer-details-tab">
+                            <!-- Logo Upload Section -->
+                            <div class="logo-upload-section">
+                                <div class="logo-preview">
+                                    <div class="upload-placeholder">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <p>Upload Logo</p>
+                                    </div>
+                                    <img id="logo-preview-img" src="" alt="" style="display: none;">
+                                </div>
+                                <div class="logo-controls">
+                                    <label for="logo-upload" class="upload-btn">
+                                        <i class="fas fa-upload"></i> Upload Logo
+                                        <input type="file" id="logo-upload" accept=".png,.jpg,.jpeg,.svg" hidden>
+                                    </label>
+                                    <p class="logo-info">Accepted formats: PNG, JPG, SVG</p>
+                                    <button type="button" id="remove-logo" class="remove-logo-btn" style="display: none;">
+                                        <i class="fas fa-trash"></i> Remove
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Invoice Header Information -->
+                            <div class="invoice-info-section">
+                                <div class="info-col">
+                                    <div class="form-group">
+                                        <label for="invoice-number">Invoice Number</label>
+                                        <input type="text" id="invoice-number" placeholder="INV-2023-001">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="payment-terms">Payment Terms</label>
+                                        <select id="payment-terms">
+                                            <option value="due-receipt">Due on Receipt</option>
+                                            <option value="net-7">Net 7</option>
+                                            <option value="net-15">Net 15</option>
+                                            <option value="net-30">Net 30</option>
+                                            <option value="net-60">Net 60</option>
+                                            <option value="custom">Custom</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="info-col">
+                                    <div class="form-group">
+                                        <label for="issue-date">Issue Date</label>
+                                        <input type="date" id="issue-date">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="due-date">Due Date</label>
+                                        <input type="date" id="due-date">
+                                    </div>
+                                </div>
+                                <div class="info-col">
+                                    <div class="form-group">
+                                        <label for="currency">Currency</label>
+                                        <select id="currency">
+                                            <option value="INR">INR (₹)</option>
+                                            <option value="USD">USD ($)</option>
+                                            <option value="EUR">EUR (€)</option>
+                                            <option value="GBP">GBP (£)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="invoice-type">Invoice Type</label>
+                                        <select id="invoice-type">
+                                            <option value="sales">Sales Invoice</option>
+                                            <option value="purchase">Purchase Bill</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Customer/Supplier Information -->
+                            <div class="invoice-parties-section">
+                                <div class="form-group full-width">
+                                    <label for="customer-supplier">Customer/Supplier</label>
+                                    <input type="text" id="customer-supplier" placeholder="Enter name">
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="customer-email">Email</label>
+                                        <input type="email" id="customer-email" placeholder="customer@example.com">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="customer-phone">Phone</label>
+                                        <input type="tel" id="customer-phone" placeholder="Phone number">
+                                    </div>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label for="customer-address">Address</label>
+                                    <textarea id="customer-address" placeholder="Enter full address"></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-navigation">
+                                <button type="button" class="next-tab-btn" data-next="item-list">Next: Item List <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- Item List Tab -->
+                        <div class="tab-content" id="item-list-tab">
+                            <!-- Invoice Items Table -->
+                            <div class="invoice-items-section">
+                                <h3>Invoice Items</h3>
+                                <div class="invoice-items-table">
+                                    <table id="items-table">
+                                        <thead>
+                                            <tr>
+                                                <th width="45%">Description</th>
+                                                <th width="10%">Quantity</th>
+                                                <th width="15%">Rate</th>
+                                                <th width="15%">Discount</th>
+                                                <th width="15%">Amount</th>
+                                                <th width="5%"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="item-row">
+                                                <td>
+                                                    <input type="text" class="item-description" placeholder="Item description">
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="item-quantity" min="1" value="1">
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="item-rate" min="0" step="0.01" placeholder="0.00">
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="item-discount" min="0" step="0.01" placeholder="0.00">
+                                                </td>
+                                                <td>
+                                                    <span class="item-amount">0.00</span>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="remove-item-btn"><i class="fas fa-trash"></i></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <button type="button" id="add-item-btn" class="add-item-btn">
+                                        <i class="fas fa-plus"></i> Add Item
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-navigation">
+                                <button type="button" class="prev-tab-btn" data-prev="customer-details"><i class="fas fa-arrow-left"></i> Previous</button>
+                                <button type="button" class="next-tab-btn" data-next="rates-discounts">Next: Rates & Discounts <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- Rates & Discounts Tab -->
+                        <div class="tab-content" id="rates-discounts-tab">
+                            <!-- Invoice Summary -->
+                            <div class="invoice-summary-section">
+                                <h3>Invoice Summary</h3>
+                                <div class="summary-table">
+                                    <div class="summary-row">
+                                        <span class="summary-label">Subtotal:</span>
+                                        <span id="summary-subtotal" class="summary-value">0.00</span>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span class="summary-label">Tax (%):</span>
+                                        <div class="tax-input-container">
+                                            <input type="number" id="tax-rate" min="0" max="100" step="0.01" value="18">
+                                            <span id="summary-tax" class="summary-tax-value">0.00</span>
+                                        </div>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span class="summary-label">Additional Discount:</span>
+                                        <div class="discount-input-container">
+                                            <input type="number" id="additional-discount" min="0" step="0.01" value="0">
+                                            <span id="summary-discount" class="summary-discount-value">0.00</span>
+                                        </div>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span class="summary-label">Shipping:</span>
+                                        <div class="shipping-input-container">
+                                            <input type="number" id="shipping-cost" min="0" step="0.01" value="0">
+                                        </div>
+                                    </div>
+                                    <div class="summary-row grand-total">
+                                        <span class="summary-label">Grand Total:</span>
+                                        <span id="summary-grand-total" class="summary-value">0.00</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Additional Notes -->
+                            <div class="invoice-notes-section">
+                                <div class="form-group full-width">
+                                    <label for="invoice-notes">Notes</label>
+                                    <textarea id="invoice-notes" placeholder="Add any additional notes or terms..."></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-navigation">
+                                <button type="button" class="prev-tab-btn" data-prev="item-list"><i class="fas fa-arrow-left"></i> Previous</button>
+                                <button type="button" class="next-tab-btn" data-next="preview-submit">Next: Preview <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- Preview & Submit Tab -->
+                        <div class="tab-content" id="preview-submit-tab">
+                            <h3>Invoice Preview</h3>
+                            <p class="preview-instruction">Review your invoice before generating the PDF or saving.</p>
+                            
+                            <div class="invoice-preview-container">
+                                <div class="invoice-preview">
+                                    <div class="preview-header">
+                                        <div class="preview-logo" id="preview-logo">
+                                            <!-- Logo will be displayed here -->
+                                        </div>
+                                        <div class="preview-invoice-info">
+                                            <h2>INVOICE</h2>
+                                            <div class="preview-info-row">
+                                                <span class="preview-label">Invoice #:</span>
+                                                <span id="preview-invoice-number" class="preview-value"></span>
+                                            </div>
+                                            <div class="preview-info-row">
+                                                <span class="preview-label">Date:</span>
+                                                <span id="preview-date" class="preview-value"></span>
+                                            </div>
+                                            <div class="preview-info-row">
+                                                <span class="preview-label">Due Date:</span>
+                                                <span id="preview-due-date" class="preview-value"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="preview-parties">
+                                        <div class="preview-from">
+                                            <h4>From</h4>
+                                            <p>Your Company Name</p>
+                                            <p>Your Company Address</p>
+                                        </div>
+                                        <div class="preview-to">
+                                            <h4>To</h4>
+                                            <p id="preview-customer-name"></p>
+                                            <p id="preview-customer-address"></p>
+                                            <p id="preview-customer-email"></p>
+                                            <p id="preview-customer-phone"></p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="preview-items">
+                                        <table class="preview-items-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Description</th>
+                                                    <th>Quantity</th>
+                                                    <th>Rate</th>
+                                                    <th>Discount</th>
+                                                    <th>Amount</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="preview-items-body">
+                                                <!-- Items will be populated here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                    <div class="preview-summary">
+                                        <div class="preview-summary-row">
+                                            <span class="preview-summary-label">Subtotal:</span>
+                                            <span id="preview-subtotal" class="preview-summary-value"></span>
+                                        </div>
+                                        <div class="preview-summary-row">
+                                            <span class="preview-summary-label">Tax:</span>
+                                            <span id="preview-tax" class="preview-summary-value"></span>
+                                        </div>
+                                        <div class="preview-summary-row">
+                                            <span class="preview-summary-label">Additional Discount:</span>
+                                            <span id="preview-discount" class="preview-summary-value"></span>
+                                        </div>
+                                        <div class="preview-summary-row">
+                                            <span class="preview-summary-label">Shipping:</span>
+                                            <span id="preview-shipping" class="preview-summary-value"></span>
+                                        </div>
+                                        <div class="preview-summary-row grand-total">
+                                            <span class="preview-summary-label">Grand Total:</span>
+                                            <span id="preview-grand-total" class="preview-summary-value"></span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="preview-notes">
+                                        <h4>Notes</h4>
+                                        <p id="preview-notes-content"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-navigation">
+                                <button type="button" class="prev-tab-btn" data-prev="rates-discounts"><i class="fas fa-arrow-left"></i> Previous</button>
+                                <div class="preview-actions">
+                                    <button type="button" id="preview-generate-pdf-btn" class="preview-generate-pdf-btn"><i class="fas fa-file-pdf"></i> Generate PDF</button>
+                                    <button type="button" id="preview-save-invoice-btn" class="preview-save-invoice-btn"><i class="fas fa-save"></i> Save Invoice</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="generate-invoice-pdf-btn" class="generate-invoice-pdf-btn">Generate PDF</button>
+                <button id="save-invoice-btn" class="save-invoice-btn">Save Invoice</button>
+                <button class="cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Overlay -->
+    <div class="modal-overlay"></div>
+
+    <script src="invoice-bills.js"></script>
+</body>
+</html> 

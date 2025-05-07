@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | WIMS - Warehouse Inventory Management System</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2>WIMS<span>System</span></h2>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <ul>
+                    <li class="active"><a href="index.html"><i class="fas fa-th-large"></i> Dashboard</a></li>
+                    <li><a href="products.html"><i class="fas fa-box"></i> Products</a></li>
+                    <li><a href="customers.html"><i class="fas fa-users"></i> Customers</a></li>
+                    <li><a href="sales.html"><i class="fas fa-shopping-cart"></i> Sales</a></li>
+                    <li><a href="suppliers.html"><i class="fas fa-truck"></i> Supplier</a></li>
+                    <li><a href="purchases-new.html"><i class="fas fa-shopping-bag"></i> Purchase</a></li>
+                    <li><a href="invoice-bills.html"><i class="fas fa-file-invoice-dollar"></i> Invoice & Bills</a></li>
+                    <li><a href="stock-transfer.html"><i class="fas fa-exchange-alt"></i> Stock Transfer</a></li>
+                    <li><a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                </ul>
+            </nav>
+            
+            <div class="mobile-app-promo">
+                <div class="promo-icon"><i class="fas fa-mobile-alt"></i></div>
+                <div class="promo-text">
+                    <p>Try our mobile app</p>
+                    <a href="#">Download Now</a>
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <ul>
+                    <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                    <li><a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Navigation -->
+            <div class="top-nav">
+                <button id="sidebar-toggle" class="sidebar-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                
+                <div class="user-actions">
+                    <div class="notification">
+                        <i class="far fa-bell"></i>
+                        <span class="badge">3</span>
+                        <div class="dropdown-content notification-dropdown">
+                            <div class="dropdown-header">
+                                <h4>Notifications</h4>
+                                <a href="#" class="mark-all-read">Mark all as read</a>
+                            </div>
+                            <div class="notification-list">
+                                <a href="#" class="notification-item unread">
+                                    <div class="notification-icon"><i class="fas fa-box"></i></div>
+                                    <div class="notification-content">
+                                        <p class="notification-text">New shipment of 4K TVs arrived</p>
+                                        <p class="notification-time">2 hours ago</p>
+                                    </div>
+                                </a>
+                                <a href="#" class="notification-item unread">
+                                    <div class="notification-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                                    <div class="notification-content">
+                                        <p class="notification-text">Low stock alert: Wireless Headphones</p>
+                                        <p class="notification-time">3 hours ago</p>
+                                    </div>
+                                </a>
+                                <a href="#" class="notification-item">
+                                    <div class="notification-icon"><i class="fas fa-truck"></i></div>
+                                    <div class="notification-content">
+                                        <p class="notification-text">Order #45678 shipped to customer</p>
+                                        <p class="notification-time">Yesterday</p>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="dropdown-footer">
+                                <a href="#">View all notifications</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="messages">
+                        <i class="far fa-envelope"></i>
+                        <span class="badge">5</span>
+                        <div class="dropdown-content messages-dropdown">
+                            <div class="dropdown-header">
+                                <h4>Messages</h4>
+                                <a href="#" class="mark-all-read">Mark all as read</a>
+                            </div>
+                            <div class="messages-list">
+                                <a href="#" class="message-item unread">
+                                    <div class="message-avatar">
+                                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Avatar">
+                                    </div>
+                                    <div class="message-content">
+                                        <p class="message-sender">Rajesh Kumar</p>
+                                        <p class="message-text">Need update on order #12345</p>
+                                        <p class="message-time">1 hour ago</p>
+                                    </div>
+                                </a>
+                                <a href="#" class="message-item unread">
+                                    <div class="message-avatar">
+                                        <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Avatar">
+                                    </div>
+                                    <div class="message-content">
+                                        <p class="message-sender">Priya Singh</p>
+                                        <p class="message-text">Payment received for invoice #INV-788</p>
+                                        <p class="message-time">3 hours ago</p>
+                                    </div>
+                                </a>
+                                <a href="#" class="message-item">
+                                    <div class="message-avatar">
+                                        <img src="https://randomuser.me/api/portraits/men/78.jpg" alt="Avatar">
+                                    </div>
+                                    <div class="message-content">
+                                        <p class="message-sender">Vikram Sharma</p>
+                                        <p class="message-text">Inquiry about new product line</p>
+                                        <p class="message-time">Yesterday</p>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="dropdown-footer">
+                                <a href="#">View all messages</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="user-profile">
+                        <img src="https://randomuser.me/api/portraits/women/33.jpg" alt="User Profile">
+                        <div class="dropdown">
+                            <span>Ekta Sandhu</span>
+                            <i class="fas fa-chevron-down"></i>
+                            <div class="dropdown-content">
+                                <a href="#"><i class="fas fa-user"></i> Profile</a>
+                                <a href="#"><i class="fas fa-cog"></i> Settings</a>
+                                <a href="#"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <div class="dashboard-header">
+                    <h1>Dashboard</h1>
+                    <div class="date-filter">
+                        <div class="filter-option active" data-range="today">Today</div>
+                        <div class="filter-option" data-range="week">This Week</div>
+                        <div class="filter-option" data-range="month">This Month</div>
+                        <div class="filter-option" data-range="year">This Year</div>
+                    </div>
+                </div>
+                
+                <!-- Quick Stats -->
+                <div class="quick-stats">
+                    <div class="stat-card">
+                        <div class="stat-card-body">
+                            <div class="stat-card-info">
+                                <div class="stat-card-title">Total Sales</div>
+                                <div class="stat-card-value">₹876,543</div>
+                                <div class="stat-card-change increase">
+                                    <i class="fas fa-arrow-up"></i> 12.5%
+                                </div>
+                            </div>
+                            <div class="stat-card-icon sales">
+                                <i class="fas fa-rupee-sign"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card-chart">
+                            <div class="chart-placeholder"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-card-body">
+                            <div class="stat-card-info">
+                                <div class="stat-card-title">Total Orders</div>
+                                <div class="stat-card-value">1,234</div>
+                                <div class="stat-card-change increase">
+                                    <i class="fas fa-arrow-up"></i> 8.3%
+                                </div>
+                            </div>
+                            <div class="stat-card-icon orders">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card-chart">
+                            <div class="chart-placeholder"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-card-body">
+                            <div class="stat-card-info">
+                                <div class="stat-card-title">Total Inventory</div>
+                                <div class="stat-card-value">5,678</div>
+                                <div class="stat-card-change decrease">
+                                    <i class="fas fa-arrow-down"></i> 3.2%
+                                </div>
+                            </div>
+                            <div class="stat-card-icon inventory">
+                                <i class="fas fa-cubes"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card-chart">
+                            <div class="chart-placeholder"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-card-body">
+                            <div class="stat-card-info">
+                                <div class="stat-card-title">Customers</div>
+                                <div class="stat-card-value">896</div>
+                                <div class="stat-card-change increase">
+                                    <i class="fas fa-arrow-up"></i> 5.7%
+                                </div>
+                            </div>
+                            <div class="stat-card-icon customers">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card-chart">
+                            <div class="chart-placeholder"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sales Overview -->
+                <div class="sales-overview">
+                    <div class="overview-card sales-chart">
+                        <div class="card-header">
+                            <h2>Sales Overview</h2>
+                            <div class="card-actions">
+                                <div class="time-period">
+                                    <span class="active">Daily</span>
+                                    <span>Weekly</span>
+                                    <span>Monthly</span>
+                                </div>
+                                <div class="card-options">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                    <div class="options-dropdown">
+                                        <a href="#"><i class="fas fa-download"></i> Download Report</a>
+                                        <a href="#"><i class="fas fa-sync"></i> Refresh Data</a>
+                                        <a href="#"><i class="fas fa-cog"></i> Settings</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <div class="chart-placeholder large"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="overview-card inventory-status">
+                        <div class="card-header">
+                            <h2>Inventory Status</h2>
+                            <div class="card-actions">
+                                <div class="card-options">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                    <div class="options-dropdown">
+                                        <a href="#"><i class="fas fa-download"></i> Download Report</a>
+                                        <a href="#"><i class="fas fa-sync"></i> Refresh Data</a>
+                                        <a href="#"><i class="fas fa-cog"></i> Settings</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="inventory-categories">
+                                <div class="category-item">
+                                    <div class="category-name">Electronics</div>
+                                    <div class="category-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: 85%;"></div>
+                                        </div>
+                                        <div class="category-value">2,750 units</div>
+                                    </div>
+                                </div>
+                                <div class="category-item">
+                                    <div class="category-name">Clothing</div>
+                                    <div class="category-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: 65%;"></div>
+                                        </div>
+                                        <div class="category-value">1,450 units</div>
+                                    </div>
+                                </div>
+                                <div class="category-item">
+                                    <div class="category-name">Furniture</div>
+                                    <div class="category-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: 40%;"></div>
+                                        </div>
+                                        <div class="category-value">580 units</div>
+                                    </div>
+                                </div>
+                                <div class="category-item">
+                                    <div class="category-name">Accessories</div>
+                                    <div class="category-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: 75%;"></div>
+                                        </div>
+                                        <div class="category-value">1,260 units</div>
+                                    </div>
+                                </div>
+                                <div class="category-item">
+                                    <div class="category-name">Others</div>
+                                    <div class="category-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: 25%;"></div>
+                                        </div>
+                                        <div class="category-value">320 units</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="inventory-insights">
+                                <div class="insight-item">
+                                    <div class="insight-label">Low Stock</div>
+                                    <div class="insight-value warning">12 items</div>
+                                </div>
+                                <div class="insight-item">
+                                    <div class="insight-label">Out of Stock</div>
+                                    <div class="insight-value danger">5 items</div>
+                                </div>
+                                <div class="insight-item">
+                                    <div class="insight-label">Overstock</div>
+                                    <div class="insight-value info">8 items</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bottom Section -->
+                <div class="dashboard-bottom">
+                    <div class="overview-card recent-orders">
+                        <div class="card-header">
+                            <h2>Recent Orders</h2>
+                            <div class="card-actions">
+                                <a href="#" class="view-all">View All</a>
+                                <div class="card-options">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                    <div class="options-dropdown">
+                                        <a href="#"><i class="fas fa-download"></i> Download</a>
+                                        <a href="#"><i class="fas fa-sync"></i> Refresh</a>
+                                        <a href="#"><i class="fas fa-cog"></i> Settings</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Customer</th>
+                                            <th>Date</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>#ORD-2345</td>
+                                            <td>Rahul Mehta</td>
+                                            <td>15 Nov 2023</td>
+                                            <td>₹45,750</td>
+                                            <td><span class="badge delivered">Delivered</span></td>
+                                            <td><button class="action-btn"><i class="fas fa-eye"></i></button></td>
+                                        </tr>
+                                        <tr>
+                                            <td>#ORD-2344</td>
+                                            <td>Priya Singh</td>
+                                            <td>14 Nov 2023</td>
+                                            <td>₹12,500</td>
+                                            <td><span class="badge in-transit">In Transit</span></td>
+                                            <td><button class="action-btn"><i class="fas fa-eye"></i></button></td>
+                                        </tr>
+                                        <tr>
+                                            <td>#ORD-2343</td>
+                                            <td>Vikram Sharma</td>
+                                            <td>13 Nov 2023</td>
+                                            <td>₹8,750</td>
+                                            <td><span class="badge processing">Processing</span></td>
+                                            <td><button class="action-btn"><i class="fas fa-eye"></i></button></td>
+                                        </tr>
+                                        <tr>
+                                            <td>#ORD-2342</td>
+                                            <td>Neha Patel</td>
+                                            <td>12 Nov 2023</td>
+                                            <td>₹32,400</td>
+                                            <td><span class="badge delivered">Delivered</span></td>
+                                            <td><button class="action-btn"><i class="fas fa-eye"></i></button></td>
+                                        </tr>
+                                        <tr>
+                                            <td>#ORD-2341</td>
+                                            <td>Amit Kumar</td>
+                                            <td>11 Nov 2023</td>
+                                            <td>₹18,900</td>
+                                            <td><span class="badge cancelled">Cancelled</span></td>
+                                            <td><button class="action-btn"><i class="fas fa-eye"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="overview-card top-selling">
+                        <div class="card-header">
+                            <h2>Top Selling Products</h2>
+                            <div class="card-actions">
+                                <div class="time-period">
+                                    <span class="active">Weekly</span>
+                                    <span>Monthly</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="top-product-item">
+                                <div class="product-info">
+                                    <div class="product-name">4K Smart LED Television</div>
+                                    <div class="product-category">Electronics</div>
+                                </div>
+                                <div class="product-sales">
+                                    <div class="sales-value">₹349,990</div>
+                                    <div class="sales-count">10 units</div>
+                                </div>
+                            </div>
+                            <div class="top-product-item">
+                                <div class="product-info">
+                                    <div class="product-name">Wireless Bluetooth Headphones</div>
+                                    <div class="product-category">Electronics</div>
+                                </div>
+                                <div class="product-sales">
+                                    <div class="sales-value">₹147,440</div>
+                                    <div class="sales-count">59 units</div>
+                                </div>
+                            </div>
+                            <div class="top-product-item">
+                                <div class="product-info">
+                                    <div class="product-name">Men's Formal Cotton Shirt</div>
+                                    <div class="product-category">Clothing</div>
+                                </div>
+                                <div class="product-sales">
+                                    <div class="sales-value">₹87,912</div>
+                                    <div class="sales-count">88 units</div>
+                                </div>
+                            </div>
+                            <div class="top-product-item">
+                                <div class="product-info">
+                                    <div class="product-name">Ergonomic Office Chair</div>
+                                    <div class="product-category">Furniture</div>
+                                </div>
+                                <div class="product-sales">
+                                    <div class="sales-value">₹83,986</div>
+                                    <div class="sales-count">14 units</div>
+                                </div>
+                            </div>
+                            <div class="top-product-item">
+                                <div class="product-info">
+                                    <div class="product-name">Wooden Coffee Table</div>
+                                    <div class="product-category">Furniture</div>
+                                </div>
+                                <div class="product-sales">
+                                    <div class="sales-value">₹67,491</div>
+                                    <div class="sales-count">9 units</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/script.js"></script>
+</body>
+</html> 

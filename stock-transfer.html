@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Transfer | Warehouse Inventory Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="stock-transfer.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Stock Transfer</h1>
+            <div class="header-actions">
+                <button class="new-transfer-btn"><i class="fas fa-plus"></i> New Stock Transfer</button>
+            </div>
+        </header>
+        
+        <div class="view-toggle">
+            <button class="toggle-btn active" data-view="table"><i class="fas fa-table"></i> Table View</button>
+            <button class="toggle-btn" data-view="card"><i class="fas fa-th-large"></i> Card View</button>
+        </div>
+        
+        <div class="filters-container">
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="location-filter">Location:</label>
+                    <select id="location-filter">
+                        <option value="">All Locations</option>
+                        <option value="warehouse-a">Warehouse A</option>
+                        <option value="warehouse-b">Warehouse B</option>
+                        <option value="branch-1">Branch 1</option>
+                        <option value="branch-2">Branch 2</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="date-from">From:</label>
+                    <input type="date" id="date-from">
+                </div>
+                <div class="filter-group">
+                    <label for="date-to">To:</label>
+                    <input type="date" id="date-to">
+                </div>
+                <div class="filter-group">
+                    <label for="transfer-search">Search:</label>
+                    <input type="text" id="transfer-search" placeholder="Search transfers...">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Transfer Path Visualization -->
+        <div class="transfer-path-container">
+            <div class="transfer-path">
+                <div class="transfer-path-progress"></div>
+                <div class="location-marker source"></div>
+                <div class="location-marker destination"></div>
+                <div class="location-label source">Source Location</div>
+                <div class="location-label destination">Destination Location</div>
+                <div class="transfer-info">
+                    <span class="icon"><i class="fas fa-exchange-alt"></i></span>
+                    <span class="quantity">0</span> items transferred
+                </div>
+                <div class="transfer-status">Transfer Complete</div>
+            </div>
+        </div>
+        
+        <!-- Table View -->
+        <div class="view-container table-view active">
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+                <span>Loading transfers...</span>
+            </div>
+            
+            <div class="empty-state" style="display: none;">
+                <i class="fas fa-exchange-alt"></i>
+                <h3>No transfers found</h3>
+                <p>There are no stock transfers matching your filters.</p>
+                <button class="new-transfer-btn">Create New Transfer</button>
+            </div>
+            
+            <table class="transfer-table">
+                <thead>
+                    <tr>
+                        <th>Transfer ID</th>
+                        <th>Date</th>
+                        <th>From Location</th>
+                        <th>To Location</th>
+                        <th>Product(s)</th>
+                        <th>Quantity</th>
+                        <th>Stock Status</th>
+                        <th>Reason/Remarks</th>
+                        <th>Handled By</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Transfer rows will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Card View -->
+        <div class="view-container card-view">
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+                <span>Loading transfers...</span>
+            </div>
+            
+            <div class="empty-state" style="display: none;">
+                <i class="fas fa-exchange-alt"></i>
+                <h3>No transfers found</h3>
+                <p>There are no stock transfers matching your filters.</p>
+                <button class="new-transfer-btn">Create New Transfer</button>
+            </div>
+            
+            <div class="transfer-cards">
+                <!-- Transfer cards will be inserted here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- New Transfer Slide-in Panel -->
+    <div class="transfer-panel">
+        <div class="panel-header">
+            <h2>New Stock Transfer</h2>
+            <button class="close-panel-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="panel-body">
+            <form id="transfer-form">
+                <div class="form-group">
+                    <label for="transfer-id">Transfer ID:</label>
+                    <input type="text" id="transfer-id" readonly>
+                    <span class="hint">Auto-generated</span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="transfer-date">Date:</label>
+                    <input type="date" id="transfer-date" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="from-location">From Location:</label>
+                    <select id="from-location" required>
+                        <option value="">Select location</option>
+                        <option value="warehouse-a">Warehouse A</option>
+                        <option value="warehouse-b">Warehouse B</option>
+                        <option value="branch-1">Branch 1</option>
+                        <option value="branch-2">Branch 2</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="to-location">To Location:</label>
+                    <select id="to-location" required>
+                        <option value="">Select location</option>
+                        <option value="warehouse-a">Warehouse A</option>
+                        <option value="warehouse-b">Warehouse B</option>
+                        <option value="branch-1">Branch 1</option>
+                        <option value="branch-2">Branch 2</option>
+                    </select>
+                </div>
+                
+                <div class="form-group products-container">
+                    <label>Products:</label>
+                    <div class="product-list">
+                        <div class="product-item">
+                            <div class="product-select-container">
+                                <select class="product-select" required>
+                                    <option value="">Select product</option>
+                                    <option value="product-1">4K Smart LED Television</option>
+                                    <option value="product-2">Wireless Bluetooth Headphones</option>
+                                    <option value="product-3">Ergonomic Office Chair</option>
+                                    <option value="product-4">Wooden Coffee Table</option>
+                                    <option value="product-5">Men's Formal Cotton Shirt</option>
+                                </select>
+                                <div class="stock-info">
+                                    <span class="available-stock">Available: <span class="stock-count">0</span></span>
+                                </div>
+                            </div>
+                            <div class="quantity-container">
+                                <label for="quantity-1">Quantity:</label>
+                                <input type="number" id="quantity-1" class="quantity-input" min="1" required>
+                            </div>
+                            <button type="button" class="remove-product-btn"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <button type="button" class="add-product-btn"><i class="fas fa-plus"></i> Add Another Product</button>
+                </div>
+                
+                <div class="form-group">
+                    <label for="remarks">Reason/Remarks:</label>
+                    <textarea id="remarks" rows="3" placeholder="Enter reason for transfer"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="handled-by">Handled By:</label>
+                    <select id="handled-by" required>
+                        <option value="">Select handler</option>
+                        <option value="Anil Kumar">Anil Kumar (Admin)</option>
+                        <option value="Meera Reddy">Meera Reddy (User)</option>
+                        <option value="Raj Kumar">Raj Kumar (Admin)</option>
+                        <option value="Sunil Gupta">Sunil Gupta (User)</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="panel-footer">
+            <button class="save-transfer-btn">Save Transfer</button>
+            <button class="cancel-btn">Cancel</button>
+        </div>
+    </div>
+    
+    <!-- Transfer Detail Modal -->
+    <div class="transfer-detail-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Transfer Details</h2>
+                <button class="close-modal-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <!-- Transfer details will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button class="close-btn">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Overlay -->
+    <div class="modal-overlay"></div>
+    
+    <!-- Toast Notifications -->
+    <div class="toast transfer-success">
+        <div class="toast-icon"><i class="fas fa-check-circle"></i></div>
+        <div class="toast-content">Stock transfer completed successfully!</div>
+    </div>
+
+    <script src="stock-transfer.js"></script>
+</body>
+</html> 

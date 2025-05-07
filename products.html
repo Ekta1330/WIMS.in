@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products | WIMS - Warehouse Inventory Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="products.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Add a small inline script to detect page load -->
+    <script>
+        console.log('Products page HTML loading - head section');
+        window.wimsProductsInit = false;
+    </script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2>WIMS<span>System</span></h2>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-th-large"></i> Dashboard</a></li>
+                    <li class="active"><a href="products.html"><i class="fas fa-box"></i> Products</a></li>
+                    <li><a href="customers.html"><i class="fas fa-users"></i> Customers</a></li>
+                    <li><a href="sales.html"><i class="fas fa-shopping-cart"></i> Sales</a></li>
+                    <li><a href="suppliers.html"><i class="fas fa-truck"></i> Supplier</a></li>
+                    <li><a href="purchases-new.html"><i class="fas fa-shopping-bag"></i> Purchase</a></li>
+                    <li><a href="#"><i class="fas fa-file-invoice-dollar"></i> Invoice & Bills</a></li>
+                    <li><a href="#"><i class="fas fa-exchange-alt"></i> Stock Transfer</a></li>
+                    <li><a href="#"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                </ul>
+            </nav>
+            
+            <div class="mobile-app-promo">
+                <div class="promo-icon"><i class="fas fa-mobile-alt"></i></div>
+                <div class="promo-text">
+                    <p>Try our mobile app</p>
+                    <a href="#">Download Now</a>
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <ul>
+                    <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                    <li><a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Navigation -->
+            <div class="top-nav">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                
+                <div class="user-actions">
+                    <div class="notification">
+                        <i class="far fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="messages">
+                        <i class="far fa-envelope"></i>
+                        <span class="badge">5</span>
+                    </div>
+                    <div class="user-profile">
+                        <img src="https://randomuser.me/api/portraits/men/44.jpg" alt="User Profile">
+                        <div class="dropdown">
+                            <span>John Doe</span>
+                            <i class="fas fa-chevron-down"></i>
+                            <div class="dropdown-content">
+                                <a href="#"><i class="fas fa-user"></i> Profile</a>
+                                <a href="#"><i class="fas fa-cog"></i> Settings</a>
+                                <a href="#"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Products Content -->
+            <div class="products-content">
+                <!-- Add debug info that would appear if there's an issue -->
+                <div id="loading-debug" style="display: none; padding: 20px; background-color: #fff3cd; border: 1px solid #ffeeba; margin-bottom: 20px; border-radius: 5px;">
+                    <h3>Troubleshooting Product Panel</h3>
+                    <p>If you're seeing this message, there might be issues loading the Products panel.</p>
+                    <button onclick="document.getElementById('loading-debug').style.display='none'" style="background: #2c3e50; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Hide</button>
+                </div>
+                
+                <div class="products-header">
+                    <h1>Product Inventory</h1>
+                    <div class="products-actions">
+                        <div class="filter-options">
+                            <select id="category-filter">
+                                <option value="">All Categories</option>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Clothing">Clothing</option>
+                                <option value="Furniture">Furniture</option>
+                                <option value="Accessories">Accessories</option>
+                                <option value="Food">Food & Beverages</option>
+                            </select>
+                            <div class="search-product">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="product-search" placeholder="Search products...">
+                            </div>
+                        </div>
+                        <button class="add-product-btn"><i class="fas fa-plus"></i> Add New Product</button>
+                    </div>
+                </div>
+                
+                <div class="products-table-container">
+                    <table class="products-table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Product ID/SKU</th>
+                                <th>Product Name</th>
+                                <th>Category</th>
+                                <th>Brand</th>
+                                <th>Unit</th>
+                                <th>Purchase Price</th>
+                                <th>Selling Price</th>
+                                <th>Stock</th>
+                                <th>Reorder Level</th>
+                                <th>Barcode</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="product-image">
+                                    <img src="https://via.placeholder.com/50" alt="Product Thumbnail">
+                                </td>
+                                <td>PRD-001</td>
+                                <td class="product-name">Wireless Bluetooth Headphones</td>
+                                <td>Electronics</td>
+                                <td>SoundMax</td>
+                                <td>pcs</td>
+                                <td>₹1,800</td>
+                                <td>₹2,499</td>
+                                <td><span class="stock-level sufficient">42</span></td>
+                                <td>15</td>
+                                <td class="barcode"><i class="fas fa-barcode"></i></td>
+                                <td class="actions">
+                                    <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="product-image">
+                                    <img src="https://via.placeholder.com/50" alt="Product Thumbnail">
+                                </td>
+                                <td>PRD-002</td>
+                                <td class="product-name">4K Smart LED Television</td>
+                                <td>Electronics</td>
+                                <td>VisualTech</td>
+                                <td>pcs</td>
+                                <td>₹28,500</td>
+                                <td>₹34,999</td>
+                                <td><span class="stock-level sufficient">18</span></td>
+                                <td>5</td>
+                                <td class="barcode"><i class="fas fa-barcode"></i></td>
+                                <td class="actions">
+                                    <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="product-image">
+                                    <img src="https://via.placeholder.com/50" alt="Product Thumbnail">
+                                </td>
+                                <td>PRD-003</td>
+                                <td class="product-name">Men's Formal Cotton Shirt</td>
+                                <td>Clothing</td>
+                                <td>FashionStyle</td>
+                                <td>pcs</td>
+                                <td>₹550</td>
+                                <td>₹999</td>
+                                <td><span class="stock-level warning">12</span></td>
+                                <td>15</td>
+                                <td class="barcode"><i class="fas fa-barcode"></i></td>
+                                <td class="actions">
+                                    <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="product-image">
+                                    <img src="https://via.placeholder.com/50" alt="Product Thumbnail">
+                                </td>
+                                <td>PRD-004</td>
+                                <td class="product-name">Ergonomic Office Chair</td>
+                                <td>Furniture</td>
+                                <td>ComfortPlus</td>
+                                <td>pcs</td>
+                                <td>₹4,200</td>
+                                <td>₹5,999</td>
+                                <td><span class="stock-level critical">3</span></td>
+                                <td>8</td>
+                                <td class="barcode"><i class="fas fa-barcode"></i></td>
+                                <td class="actions">
+                                    <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="product-image">
+                                    <img src="https://via.placeholder.com/50" alt="Product Thumbnail">
+                                </td>
+                                <td>PRD-005</td>
+                                <td class="product-name">Stainless Steel Water Bottle</td>
+                                <td>Accessories</td>
+                                <td>HydroLife</td>
+                                <td>pcs</td>
+                                <td>₹320</td>
+                                <td>₹499</td>
+                                <td><span class="stock-level sufficient">85</span></td>
+                                <td>20</td>
+                                <td class="barcode"><i class="fas fa-barcode"></i></td>
+                                <td class="actions">
+                                    <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="product-image">
+                                    <img src="https://via.placeholder.com/50" alt="Product Thumbnail">
+                                </td>
+                                <td>PRD-006</td>
+                                <td class="product-name">Organic Honey</td>
+                                <td>Food</td>
+                                <td>NatureFresh</td>
+                                <td>kg</td>
+                                <td>₹220</td>
+                                <td>₹350</td>
+                                <td><span class="stock-level warning">14</span></td>
+                                <td>15</td>
+                                <td class="barcode"><i class="fas fa-barcode"></i></td>
+                                <td class="actions">
+                                    <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="product-image">
+                                    <img src="https://via.placeholder.com/50" alt="Product Thumbnail">
+                                </td>
+                                <td>PRD-007</td>
+                                <td class="product-name">Smartphone Case</td>
+                                <td>Accessories</td>
+                                <td>TechGuard</td>
+                                <td>pcs</td>
+                                <td>₹180</td>
+                                <td>₹299</td>
+                                <td><span class="stock-level sufficient">67</span></td>
+                                <td>25</td>
+                                <td class="barcode"><i class="fas fa-barcode"></i></td>
+                                <td class="actions">
+                                    <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="product-image">
+                                    <img src="https://via.placeholder.com/50" alt="Product Thumbnail">
+                                </td>
+                                <td>PRD-008</td>
+                                <td class="product-name">Wooden Coffee Table</td>
+                                <td>Furniture</td>
+                                <td>WoodCraft</td>
+                                <td>pcs</td>
+                                <td>₹3,500</td>
+                                <td>₹5,299</td>
+                                <td><span class="stock-level critical">2</span></td>
+                                <td>5</td>
+                                <td class="barcode"><i class="fas fa-barcode"></i></td>
+                                <td class="actions">
+                                    <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="pagination">
+                    <button class="page-btn prev"><i class="fas fa-chevron-left"></i></button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <span class="page-dots">...</span>
+                    <button class="page-btn">12</button>
+                    <button class="page-btn next"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add New Product Panel -->
+    <div class="add-product-panel">
+        <div class="panel-content">
+            <div class="panel-header">
+                <h2>Add New Product</h2>
+                <button class="close-panel-btn"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div class="panel-body">
+                <form id="add-product-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="product-id">Product ID/SKU</label>
+                            <input type="text" id="product-id" placeholder="e.g., PRD-0123">
+                        </div>
+                        <div class="form-group">
+                            <label for="product-name">Product Name</label>
+                            <input type="text" id="product-name" placeholder="Enter product name">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="product-category">Category</label>
+                            <select id="product-category">
+                                <option value="">Select category</option>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Clothing">Clothing</option>
+                                <option value="Furniture">Furniture</option>
+                                <option value="Accessories">Accessories</option>
+                                <option value="Food">Food & Beverages</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-brand">Brand</label>
+                            <input type="text" id="product-brand" placeholder="Enter brand name">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="product-unit">Unit</label>
+                            <select id="product-unit">
+                                <option value="pcs">pcs</option>
+                                <option value="kg">kg</option>
+                                <option value="liter">liter</option>
+                                <option value="meter">meter</option>
+                                <option value="box">box</option>
+                                <option value="dozen">dozen</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-barcode">Barcode/QR Code</label>
+                            <div class="barcode-input">
+                                <input type="text" id="product-barcode" placeholder="Enter barcode or scan">
+                                <button type="button" class="scan-btn"><i class="fas fa-barcode"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="purchase-price">Purchase Price</label>
+                            <div class="price-input">
+                                <span class="currency">₹</span>
+                                <input type="number" step="0.01" id="purchase-price" placeholder="0.00">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="selling-price">Selling Price</label>
+                            <div class="price-input">
+                                <span class="currency">₹</span>
+                                <input type="number" step="0.01" id="selling-price" placeholder="0.00">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="current-stock">Current Stock</label>
+                            <input type="number" id="current-stock" placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="reorder-level">Reorder Level</label>
+                            <input type="number" id="reorder-level" placeholder="0">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="product-image">Product Image</label>
+                        <div class="image-upload-container">
+                            <div class="image-preview">
+                                <img id="image-preview" src="https://via.placeholder.com/150?text=No+Image" alt="Product Image Preview">
+                            </div>
+                            <div class="image-upload">
+                                <label for="product-image-input" class="upload-btn">
+                                    <i class="fas fa-cloud-upload-alt"></i> Choose Image
+                                </label>
+                                <input type="file" id="product-image-input" accept="image/*" hidden>
+                                <p class="upload-info">Recommended size: 600×600px, Max 2MB</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="product-description">Description (Optional)</label>
+                        <textarea id="product-description" rows="3" placeholder="Enter product description"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn">Cancel</button>
+                        <button type="submit" class="save-btn">Save Product</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Panel Overlay -->
+    <div class="panel-overlay"></div>
+
+    <!-- Move Chart.js below to prevent it from blocking other script loads -->
+    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="products.js"></script>
+    
+    <script>
+        // Additional troubleshooting script
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Products page fully loaded - DOMContentLoaded event fired');
+            
+            // Check if our products initialization was successful
+            setTimeout(function() {
+                if (!window.wimsProductsInit) {
+                    console.error('Products page may not have initialized correctly');
+                    document.getElementById('loading-debug').style.display = 'block';
+                    
+                    // Try to force active state on Products link
+                    const productsLink = document.querySelector('.sidebar-menu li a[href="products.html"]');
+                    if (productsLink) {
+                        const productsLi = productsLink.closest('li');
+                        if (productsLi) {
+                            document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
+                            productsLi.classList.add('active');
+                            console.log('Forced Products link active state');
+                        }
+                    }
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html> 

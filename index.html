@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WIMS - Warehouse Inventory Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2>WIMS<span>System</span></h2>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <ul>
+                    <li class="active"><a href="index.html"><i class="fas fa-th-large"></i> Dashboard</a></li>
+                    <li><a href="products.html"><i class="fas fa-box"></i> Products</a></li>
+                    <li><a href="customers.html"><i class="fas fa-users"></i> Customers</a></li>
+                    <li><a href="sales.html"><i class="fas fa-shopping-cart"></i> Sales</a></li>
+                    <li><a href="suppliers.html"><i class="fas fa-truck"></i> Supplier</a></li>
+                    <li><a href="purchases-new.html"><i class="fas fa-shopping-bag"></i> Purchase</a></li>
+                    <li><a href="invoice-bills.html"><i class="fas fa-file-invoice-dollar"></i> Invoice & Bills</a></li>
+                    <li><a href="stock-transfer.html"><i class="fas fa-exchange-alt"></i> Stock Transfer</a></li>
+                    <li><a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                </ul>
+            </nav>
+            
+            <div class="mobile-app-promo">
+                <div class="promo-icon"><i class="fas fa-mobile-alt"></i></div>
+                <div class="promo-text">
+                    <p>Try our mobile app</p>
+                    <a href="#">Download Now</a>
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <ul>
+                    <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                    <li><a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Navigation -->
+            <div class="top-nav">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                
+                <div class="user-actions">
+                    <div class="notification">
+                        <i class="far fa-bell"></i>
+                        <span class="badge">3</span>
+                        <div class="dropdown-content notification-dropdown">
+                            <div class="dropdown-header">
+                                <h4>Notifications</h4>
+                                <a href="#" class="mark-all-read">Mark all as read</a>
+                            </div>
+                            <div class="notification-list">
+                                <a href="#" class="notification-item unread">
+                                    <div class="notification-icon"><i class="fas fa-box"></i></div>
+                                    <div class="notification-content">
+                                        <p class="notification-text">Low stock alert for Ergonomic Office Chair</p>
+                                        <p class="notification-time">2 hours ago</p>
+                                    </div>
+                                </a>
+                                <a href="#" class="notification-item unread">
+                                    <div class="notification-icon"><i class="fas fa-user-plus"></i></div>
+                                    <div class="notification-content">
+                                        <p class="notification-text">New customer registration: Amit Patel</p>
+                                        <p class="notification-time">5 hours ago</p>
+                                    </div>
+                                </a>
+                                <a href="#" class="notification-item unread">
+                                    <div class="notification-icon"><i class="fas fa-shopping-cart"></i></div>
+                                    <div class="notification-content">
+                                        <p class="notification-text">New order placed #ORD-7289</p>
+                                        <p class="notification-time">Yesterday</p>
+                                    </div>
+                                </a>
+                                <a href="#" class="notification-item">
+                                    <div class="notification-icon"><i class="fas fa-file-invoice"></i></div>
+                                    <div class="notification-content">
+                                        <p class="notification-text">Invoice #INV-4582 payment received</p>
+                                        <p class="notification-time">2 days ago</p>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="dropdown-footer">
+                                <a href="#">View all notifications</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="messages">
+                        <i class="far fa-envelope"></i>
+                        <span class="badge">5</span>
+                        <div class="dropdown-content messages-dropdown">
+                            <div class="dropdown-header">
+                                <h4>Messages</h4>
+                                <a href="#" class="mark-all-read">Mark all as read</a>
+                            </div>
+                            <div class="message-list">
+                                <a href="#" class="message-item unread">
+                                    <div class="message-sender-avatar">
+                                        <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Sender Avatar">
+                                    </div>
+                                    <div class="message-content">
+                                        <p class="message-sender">Priya Patel</p>
+                                        <p class="message-text">I need to confirm my recent order details</p>
+                                        <p class="message-time">45 minutes ago</p>
+                                    </div>
+                                </a>
+                                <a href="#" class="message-item unread">
+                                    <div class="message-sender-avatar">
+                                        <img src="https://randomuser.me/api/portraits/men/36.jpg" alt="Sender Avatar">
+                                    </div>
+                                    <div class="message-content">
+                                        <p class="message-sender">Vikram Singh</p>
+                                        <p class="message-text">When will my order be delivered?</p>
+                                        <p class="message-time">2 hours ago</p>
+                                    </div>
+                                </a>
+                                <a href="#" class="message-item unread">
+                                    <div class="message-sender-avatar">
+                                        <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="Sender Avatar">
+                                    </div>
+                                    <div class="message-content">
+                                        <p class="message-sender">Anita Desai</p>
+                                        <p class="message-text">Please update our shipping address</p>
+                                        <p class="message-time">6 hours ago</p>
+                                    </div>
+                                </a>
+                                <a href="#" class="message-item unread">
+                                    <div class="message-sender-avatar">
+                                        <img src="https://randomuser.me/api/portraits/men/58.jpg" alt="Sender Avatar">
+                                    </div>
+                                    <div class="message-content">
+                                        <p class="message-sender">Arun Kumar</p>
+                                        <p class="message-text">Request for product return</p>
+                                        <p class="message-time">Yesterday</p>
+                                    </div>
+                                </a>
+                                <a href="#" class="message-item unread">
+                                    <div class="message-sender-avatar">
+                                        <img src="https://randomuser.me/api/portraits/women/22.jpg" alt="Sender Avatar">
+                                    </div>
+                                    <div class="message-content">
+                                        <p class="message-sender">Meera Reddy</p>
+                                        <p class="message-text">Need help with invoice generation</p>
+                                        <p class="message-time">2 days ago</p>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="dropdown-footer">
+                                <a href="#">View all messages</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="user-profile">
+                        <img src="https://randomuser.me/api/portraits/women/33.jpg" alt="User Profile">
+                        <div class="dropdown">
+                            <span>Ekta Sandhu</span>
+                            <i class="fas fa-chevron-down"></i>
+                            <div class="dropdown-content">
+                                <a href="#"><i class="fas fa-user"></i> Profile</a>
+                                <a href="#"><i class="fas fa-cog"></i> Settings</a>
+                                <a href="#"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <h1>Dashboard Overview</h1>
+                
+                <!-- Stats Cards -->
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Total Costs</h3>
+                            <h2>₹2,865,345</h2>
+                            <p class="stat-change negative"><i class="fas fa-arrow-down"></i> 8.5% this week</p>
+                        </div>
+                        <div class="stat-icon expense">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Total Sales</h3>
+                            <h2>₹3,459,780</h2>
+                            <p class="stat-change positive"><i class="fas fa-arrow-up"></i> 12.7% this week</p>
+                        </div>
+                        <div class="stat-icon sales">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Products Sold</h3>
+                            <h2>1,247</h2>
+                            <p class="stat-change positive"><i class="fas fa-arrow-up"></i> 5.3% this week</p>
+                        </div>
+                        <div class="stat-icon products">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Stock on Hand</h3>
+                            <h2>5,678</h2>
+                            <p class="stat-change negative"><i class="fas fa-arrow-down"></i> 2.1% this week</p>
+                        </div>
+                        <div class="stat-icon stock">
+                            <i class="fas fa-warehouse"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Charts Section -->
+                <div class="charts-container">
+                    <div class="chart revenue-cost">
+                        <div class="chart-header">
+                            <h3>Revenue vs Costs</h3>
+                            <div class="chart-options">
+                                <select>
+                                    <option>This Month</option>
+                                    <option>Last Month</option>
+                                    <option>This Year</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="revenueVsCostsChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart purchase-summary">
+                        <div class="chart-header">
+                            <h3>Purchase Summary</h3>
+                            <div class="chart-options">
+                                <select>
+                                    <option>This Month</option>
+                                    <option>Last Month</option>
+                                    <option>This Year</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="purchaseSummaryChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart category-sales">
+                        <div class="chart-header">
+                            <h3>Sales by Category</h3>
+                            <div class="chart-options">
+                                <select>
+                                    <option>This Month</option>
+                                    <option>Last Month</option>
+                                    <option>This Year</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Orders Section -->
+                <div class="orders-container">
+                    <div class="purchase-orders">
+                        <div class="section-header">
+                            <h3>Purchase Orders</h3>
+                            <a href="#" class="view-all">View All</a>
+                        </div>
+                        <div class="order-list">
+                            <div class="order-item">
+                                <div class="order-info">
+                                    <h4>PO-78921</h4>
+                                    <p>₹42,500</p>
+                                </div>
+                                <div class="order-status approved">Approved</div>
+                            </div>
+                            <div class="order-item">
+                                <div class="order-info">
+                                    <h4>PO-78940</h4>
+                                    <p>₹36,750</p>
+                                </div>
+                                <div class="order-status pending">Pending</div>
+                            </div>
+                            <div class="order-item">
+                                <div class="order-info">
+                                    <h4>PO-78967</h4>
+                                    <p>₹58,200</p>
+                                </div>
+                                <div class="order-status approved">Approved</div>
+                            </div>
+                            <div class="order-item">
+                                <div class="order-info">
+                                    <h4>PO-78989</h4>
+                                    <p>₹27,300</p>
+                                </div>
+                                <div class="order-status cancelled">Cancelled</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sales-orders">
+                        <div class="section-header">
+                            <h3>Sales Orders</h3>
+                            <a href="#" class="view-all">View All</a>
+                        </div>
+                        <table class="sales-table">
+                            <thead>
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Tracking</th>
+                                    <th>Status</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Rahul Sharma</td>
+                                    <td>12 Oct 2023</td>
+                                    <td>SO-4589</td>
+                                    <td><span class="status delivered">Delivered</span></td>
+                                    <td>₹14,500</td>
+                                </tr>
+                                <tr>
+                                    <td>Priya Patel</td>
+                                    <td>10 Oct 2023</td>
+                                    <td>SO-4582</td>
+                                    <td><span class="status pending">Pending</span></td>
+                                    <td>₹32,700</td>
+                                </tr>
+                                <tr>
+                                    <td>Arun Kumar</td>
+                                    <td>08 Oct 2023</td>
+                                    <td>SO-4575</td>
+                                    <td><span class="status delivered">Delivered</span></td>
+                                    <td>₹8,900</td>
+                                </tr>
+                                <tr>
+                                    <td>Meera Reddy</td>
+                                    <td>05 Oct 2023</td>
+                                    <td>SO-4568</td>
+                                    <td><span class="status cancelled">Cancelled</span></td>
+                                    <td>₹21,350</td>
+                                </tr>
+                                <tr>
+                                    <td>Vikram Singh</td>
+                                    <td>02 Oct 2023</td>
+                                    <td>SO-4561</td>
+                                    <td><span class="status delivered">Delivered</span></td>
+                                    <td>₹17,800</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Ensure Products link is functional
+        document.addEventListener('DOMContentLoaded', function() {
+            // Find the Products link in the sidebar
+            const productsLink = document.querySelector('.sidebar-menu li a[href="products.html"]');
+            
+            if (productsLink) {
+                console.log("Index page: Products link found");
+                
+                // Add a click handler just to log the action
+                productsLink.addEventListener('click', function(e) {
+                    console.log("Products link clicked from index page");
+                    // Store this click in sessionStorage so we can detect if we came from a click
+                    sessionStorage.setItem('productsLinkClicked', 'true');
+                });
+            } else {
+                console.error("Index page: Products link not found in sidebar!");
+            }
+        });
+    </script>
+</body>
+</html> 

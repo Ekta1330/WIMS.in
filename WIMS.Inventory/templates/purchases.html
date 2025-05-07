@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchases | WIMS - Warehouse Inventory Management System</title>
+    <script>
+        // Function to make sure content is displayed when page loads
+        function ensureContentDisplayed() {
+            console.log("Body onload triggered");
+            
+            // Force display of purchase content
+            const purchasesContent = document.querySelector('.purchases-content');
+            if (purchasesContent) {
+                purchasesContent.style.display = 'block';
+            }
+            
+            // Force display of table view
+            const tableView = document.querySelector('.table-view');
+            if (tableView) {
+                tableView.classList.add('active');
+                tableView.style.display = 'block';
+            }
+            
+            // Force display of purchase table
+            const purchaseTable = document.querySelector('.purchase-table-container');
+            if (purchaseTable) {
+                purchaseTable.style.display = 'block';
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="purchases.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Ensure the view containers are properly displayed */
+        .view-container {
+            display: none;
+        }
+        .view-container.active {
+            display: block !important;
+        }
+        
+        /* Make sure the purchases content is visible */
+        .purchases-content {
+            display: block !important;
+            padding: 20px;
+            width: 100%;
+        }
+        
+        /* Ensure the table view is visible by default */
+        .table-view.active {
+            display: block !important;
+        }
+        
+        /* Ensure the panel is properly animated */
+        .new-purchase-panel {
+            position: fixed;
+            top: 0;
+            right: -700px;
+            width: 100%;
+            max-width: 700px;
+            height: 100%;
+            background-color: #fff;
+            z-index: 999;
+            overflow-y: auto;
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .new-purchase-panel.open {
+            right: 0 !important;
+        }
+        
+        .panel-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .panel-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body onload="ensureContentDisplayed()">
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2>WIMS<span>System</span></h2>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-th-large"></i> Dashboard</a></li>
+                    <li><a href="products.html"><i class="fas fa-box"></i> Products</a></li>
+                    <li><a href="customers.html"><i class="fas fa-users"></i> Customers</a></li>
+                    <li><a href="sales.html"><i class="fas fa-shopping-cart"></i> Sales</a></li>
+                    <li><a href="suppliers.html"><i class="fas fa-truck"></i> Supplier</a></li>
+                    <li class="active"><a href="purchases.html"><i class="fas fa-shopping-bag"></i> Purchase</a></li>
+                    <li><a href="#"><i class="fas fa-file-invoice-dollar"></i> Invoice & Bills</a></li>
+                    <li><a href="#"><i class="fas fa-exchange-alt"></i> Stock Transfer</a></li>
+                    <li><a href="#"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                </ul>
+            </nav>
+            
+            <div class="mobile-app-promo">
+                <div class="promo-icon"><i class="fas fa-mobile-alt"></i></div>
+                <div class="promo-text">
+                    <p>Try our mobile app</p>
+                    <a href="#">Download Now</a>
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <ul>
+                    <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                    <li><a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Navigation -->
+            <div class="top-nav">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                
+                <div class="user-actions">
+                    <div class="notification">
+                        <i class="far fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="messages">
+                        <i class="far fa-envelope"></i>
+                        <span class="badge">5</span>
+                    </div>
+                    <div class="user-profile">
+                        <img src="https://randomuser.me/api/portraits/men/44.jpg" alt="User Profile">
+                        <div class="dropdown">
+                            <span>John Doe</span>
+                            <i class="fas fa-chevron-down"></i>
+                            <div class="dropdown-content">
+                                <a href="#"><i class="fas fa-user"></i> Profile</a>
+                                <a href="#"><i class="fas fa-cog"></i> Settings</a>
+                                <a href="#"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Purchases Content -->
+            <div class="purchases-content">
+                <div class="purchases-header">
+                    <h1>Purchase Orders</h1>
+                    <div class="purchases-actions">
+                        <div class="filter-options">
+                            <div class="date-range">
+                                <label for="date-from">From:</label>
+                                <input type="date" id="date-from">
+                                <label for="date-to">To:</label>
+                                <input type="date" id="date-to">
+                            </div>
+                            <select id="supplier-filter">
+                                <option value="">All Suppliers</option>
+                                <option value="VisualTech Electronics">VisualTech Electronics</option>
+                                <option value="FashionStyle Apparels">FashionStyle Apparels</option>
+                                <option value="ComfortPlus Furniture">ComfortPlus Furniture</option>
+                                <option value="HydroLife Products">HydroLife Products</option>
+                                <option value="NatureFresh Organics">NatureFresh Organics</option>
+                            </select>
+                            <select id="status-filter">
+                                <option value="">All Statuses</option>
+                                <option value="paid">Paid</option>
+                                <option value="due">Due</option>
+                            </select>
+                            <div class="search-purchase">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="purchase-search" placeholder="Search by invoice...">
+                            </div>
+                        </div>
+                        <div class="view-toggle">
+                            <button class="toggle-btn active" data-view="table"><i class="fas fa-table"></i></button>
+                            <button class="toggle-btn" data-view="card"><i class="fas fa-th-large"></i></button>
+                        </div>
+                        <button class="new-purchase-btn"><i class="fas fa-plus"></i> New Purchase Order</button>
+                    </div>
+                </div>
+                
+                <!-- Purchase Table View -->
+                <div class="view-container table-view active">
+                    <div class="purchase-table-container">
+                        <table class="purchase-table">
+                            <thead>
+                                <tr>
+                                    <th>Invoice No.</th>
+                                    <th>Date</th>
+                                    <th>Supplier</th>
+                                    <th>Products</th>
+                                    <th>Quantity</th>
+                                    <th>Purchase Price</th>
+                                    <th>Tax</th>
+                                    <th>Total Cost</th>
+                                    <th>Payment Mode</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><a href="#" class="invoice-link">PO-10235</a></td>
+                                    <td>18 Oct 2023</td>
+                                    <td>VisualTech Electronics</td>
+                                    <td>
+                                        <button class="products-toggle">View Products</button>
+                                        <div class="products-details">
+                                            <p>4K Smart LED Television x5</p>
+                                            <p>Wireless Bluetooth Headphones x20</p>
+                                        </div>
+                                    </td>
+                                    <td>25</td>
+                                    <td>₹196,995</td>
+                                    <td>₹35,459</td>
+                                    <td class="total-amount">₹232,454</td>
+                                    <td><span class="payment-mode card">Bank Transfer</span></td>
+                                    <td><span class="status-badge paid">Paid</span></td>
+                                    <td class="actions">
+                                        <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn print"><i class="fas fa-print"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#" class="invoice-link">PO-10234</a></td>
+                                    <td>15 Oct 2023</td>
+                                    <td>FashionStyle Apparels</td>
+                                    <td>
+                                        <button class="products-toggle">View Products</button>
+                                        <div class="products-details">
+                                            <p>Men's Formal Cotton Shirt x50</p>
+                                        </div>
+                                    </td>
+                                    <td>50</td>
+                                    <td>₹35,000</td>
+                                    <td>₹6,300</td>
+                                    <td class="total-amount">₹41,300</td>
+                                    <td><span class="payment-mode credit">Credit</span></td>
+                                    <td><span class="status-badge due">Due</span></td>
+                                    <td class="actions">
+                                        <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn print"><i class="fas fa-print"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#" class="invoice-link">PO-10233</a></td>
+                                    <td>12 Oct 2023</td>
+                                    <td>ComfortPlus Furniture</td>
+                                    <td>
+                                        <button class="products-toggle">View Products</button>
+                                        <div class="products-details">
+                                            <p>Ergonomic Office Chair x15</p>
+                                            <p>Wooden Coffee Table x8</p>
+                                        </div>
+                                    </td>
+                                    <td>23</td>
+                                    <td>₹131,685</td>
+                                    <td>₹23,703</td>
+                                    <td class="total-amount">₹155,388</td>
+                                    <td><span class="payment-mode upi">UPI</span></td>
+                                    <td><span class="status-badge paid">Paid</span></td>
+                                    <td class="actions">
+                                        <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn print"><i class="fas fa-print"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#" class="invoice-link">PO-10232</a></td>
+                                    <td>10 Oct 2023</td>
+                                    <td>HydroLife Products</td>
+                                    <td>
+                                        <button class="products-toggle">View Products</button>
+                                        <div class="products-details">
+                                            <p>Stainless Steel Water Bottle x100</p>
+                                        </div>
+                                    </td>
+                                    <td>100</td>
+                                    <td>₹29,900</td>
+                                    <td>₹5,382</td>
+                                    <td class="total-amount">₹35,282</td>
+                                    <td><span class="payment-mode cash">Cash</span></td>
+                                    <td><span class="status-badge paid">Paid</span></td>
+                                    <td class="actions">
+                                        <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn print"><i class="fas fa-print"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#" class="invoice-link">PO-10231</a></td>
+                                    <td>05 Oct 2023</td>
+                                    <td>NatureFresh Organics</td>
+                                    <td>
+                                        <button class="products-toggle">View Products</button>
+                                        <div class="products-details">
+                                            <p>Organic Honey x50</p>
+                                        </div>
+                                    </td>
+                                    <td>50</td>
+                                    <td>₹12,500</td>
+                                    <td>₹2,250</td>
+                                    <td class="total-amount">₹14,750</td>
+                                    <td><span class="payment-mode credit">Credit</span></td>
+                                    <td><span class="status-badge due">Due</span></td>
+                                    <td class="actions">
+                                        <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn print"><i class="fas fa-print"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#" class="invoice-link">PO-10230</a></td>
+                                    <td>01 Oct 2023</td>
+                                    <td>TechGuard Accessories</td>
+                                    <td>
+                                        <button class="products-toggle">View Products</button>
+                                        <div class="products-details">
+                                            <p>Smartphone Case x200</p>
+                                        </div>
+                                    </td>
+                                    <td>200</td>
+                                    <td>₹39,800</td>
+                                    <td>₹7,164</td>
+                                    <td class="total-amount">₹46,964</td>
+                                    <td><span class="payment-mode bank">Bank Transfer</span></td>
+                                    <td><span class="status-badge paid">Paid</span></td>
+                                    <td class="actions">
+                                        <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn print"><i class="fas fa-print"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Purchase Card View -->
+                <div class="view-container card-view">
+                    <div class="purchase-cards">
+                        <!-- Purchase Card 1 -->
+                        <div class="purchase-card">
+                            <div class="card-header">
+                                <div class="invoice-info">
+                                    <h3><a href="#" class="invoice-link">PO-10235</a></h3>
+                                    <span class="purchase-date">18 Oct 2023</span>
+                                </div>
+                                <div class="status-container">
+                                    <span class="status-badge paid">Paid</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="supplier-info">
+                                    <span class="info-label"><i class="fas fa-truck"></i> Supplier:</span>
+                                    <span class="info-value">VisualTech Electronics</span>
+                                </div>
+                                <div class="products-list">
+                                    <span class="info-label"><i class="fas fa-box"></i> Products:</span>
+                                    <ul>
+                                        <li>4K Smart LED Television x5</li>
+                                        <li>Wireless Bluetooth Headphones x20</li>
+                                    </ul>
+                                </div>
+                                <div class="purchase-summary">
+                                    <div class="summary-row">
+                                        <span class="summary-label">Purchase Price:</span>
+                                        <span class="summary-value">₹196,995</span>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span class="summary-label">Tax:</span>
+                                        <span class="summary-value tax">+₹35,459</span>
+                                    </div>
+                                    <div class="summary-row total">
+                                        <span class="summary-label">Total Cost:</span>
+                                        <span class="summary-value">₹232,454</span>
+                                    </div>
+                                </div>
+                                <div class="payment-info">
+                                    <span class="info-label"><i class="fas fa-credit-card"></i> Payment Mode:</span>
+                                    <span class="payment-mode bank">Bank Transfer</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button class="card-btn view"><i class="fas fa-eye"></i> View Details</button>
+                                <button class="card-btn print"><i class="fas fa-print"></i> Print</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Purchase Card 2 -->
+                        <div class="purchase-card">
+                            <div class="card-header">
+                                <div class="invoice-info">
+                                    <h3><a href="#" class="invoice-link">PO-10234</a></h3>
+                                    <span class="purchase-date">15 Oct 2023</span>
+                                </div>
+                                <div class="status-container">
+                                    <span class="status-badge due">Due</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="supplier-info">
+                                    <span class="info-label"><i class="fas fa-truck"></i> Supplier:</span>
+                                    <span class="info-value">FashionStyle Apparels</span>
+                                </div>
+                                <div class="products-list">
+                                    <span class="info-label"><i class="fas fa-box"></i> Products:</span>
+                                    <ul>
+                                        <li>Men's Formal Cotton Shirt x50</li>
+                                    </ul>
+                                </div>
+                                <div class="purchase-summary">
+                                    <div class="summary-row">
+                                        <span class="summary-label">Purchase Price:</span>
+                                        <span class="summary-value">₹35,000</span>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span class="summary-label">Tax:</span>
+                                        <span class="summary-value tax">+₹6,300</span>
+                                    </div>
+                                    <div class="summary-row total">
+                                        <span class="summary-label">Total Cost:</span>
+                                        <span class="summary-value">₹41,300</span>
+                                    </div>
+                                </div>
+                                <div class="payment-info">
+                                    <span class="info-label"><i class="fas fa-credit-card"></i> Payment Mode:</span>
+                                    <span class="payment-mode credit">Credit</span>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button class="card-btn view"><i class="fas fa-eye"></i> View Details</button>
+                                <button class="card-btn print"><i class="fas fa-print"></i> Print</button>
+                            </div>
+                        </div>
+                        
+                        <!-- More cards would be here in the actual implementation -->
+                    </div>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="pagination">
+                    <button class="page-btn prev"><i class="fas fa-chevron-left"></i></button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <span class="page-dots">...</span>
+                    <button class="page-btn">7</button>
+                    <button class="page-btn next"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Purchase Panel -->
+    <div class="new-purchase-panel">
+        <div class="panel-header">
+            <h2>Create New Purchase Order</h2>
+            <button class="close-panel-btn"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <div class="panel-content">
+            <div class="panel-form">
+                <div class="panel-section">
+                    <h3>Purchase Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="invoice-number">Invoice Number</label>
+                            <input type="text" id="invoice-number" value="" readonly>
+                            <small>Auto-generated</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="purchase-date">Date of Purchase</label>
+                            <input type="date" id="purchase-date">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="supplier-name">Supplier</label>
+                            <select id="supplier-name">
+                                <option value="">Select a supplier</option>
+                                <option value="VisualTech Electronics">VisualTech Electronics</option>
+                                <option value="FashionStyle Apparels">FashionStyle Apparels</option>
+                                <option value="ComfortPlus Furniture">ComfortPlus Furniture</option>
+                                <option value="HydroLife Products">HydroLife Products</option>
+                                <option value="NatureFresh Organics">NatureFresh Organics</option>
+                                <option value="TechGuard Accessories">TechGuard Accessories</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel-section">
+                    <div class="section-header">
+                        <h3>Products</h3>
+                        <button class="add-product-btn"><i class="fas fa-plus"></i> Add Product</button>
+                    </div>
+                    
+                    <div class="products-container">
+                        <div class="no-products-message">Click "Add Product" to select products for this purchase.</div>
+                        
+                        <div class="product-entries"></div>
+                        
+                        <div class="product-entry-template" style="display: none;">
+                            <div class="product-entry">
+                                <div class="product-entry-header">
+                                    <h4>Product 1</h4>
+                                    <button class="remove-product-btn"><i class="fas fa-trash"></i></button>
+                                </div>
+                                <div class="product-entry-body">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>Product</label>
+                                            <select class="product-select">
+                                                <option value="">Select product</option>
+                                                <option value="PRD-001" data-price="1999" data-name="Wireless Bluetooth Headphones">Wireless Bluetooth Headphones</option>
+                                                <option value="PRD-002" data-price="29999" data-name="4K Smart LED Television">4K Smart LED Television</option>
+                                                <option value="PRD-003" data-price="700" data-name="Men's Formal Cotton Shirt">Men's Formal Cotton Shirt</option>
+                                                <option value="PRD-004" data-price="4999" data-name="Ergonomic Office Chair">Ergonomic Office Chair</option>
+                                                <option value="PRD-005" data-price="299" data-name="Stainless Steel Water Bottle">Stainless Steel Water Bottle</option>
+                                                <option value="PRD-006" data-price="250" data-name="Organic Honey">Organic Honey</option>
+                                                <option value="PRD-007" data-price="199" data-name="Smartphone Case">Smartphone Case</option>
+                                                <option value="PRD-008" data-price="3999" data-name="Wooden Coffee Table">Wooden Coffee Table</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>Quantity</label>
+                                            <input type="number" class="product-quantity" value="1" min="1">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Unit Price (₹)</label>
+                                            <input type="number" class="product-price" value="0.00" step="0.01">
+                                        </div>
+                                    </div>
+                                    <div class="product-subtotal">
+                                        <span class="subtotal-label">Subtotal:</span>
+                                        <span class="subtotal-value">₹0.00</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel-section">
+                    <h3>Payment Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="payment-mode">Payment Mode</label>
+                            <select id="payment-mode">
+                                <option value="">Select payment mode</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Card">Card</option>
+                                <option value="UPI">UPI</option>
+                                <option value="Credit">Credit</option>
+                                <option value="Bank Transfer">Bank Transfer</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="payment-status">Payment Status</label>
+                            <select id="payment-status">
+                                <option value="">Select status</option>
+                                <option value="paid">Paid</option>
+                                <option value="due">Due</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tax-rate">Tax Rate (%)</label>
+                            <input type="number" id="tax-rate" value="18" min="0" max="28" step="0.01">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel-preview">
+                <div class="preview-card">
+                    <div class="preview-header">
+                        <div class="invoice-preview-info">
+                            <h4>New Purchase Order</h4>
+                            <span class="invoice-number-preview">PO-Auto</span>
+                        </div>
+                        <div class="status-badge-preview">—</div>
+                    </div>
+                    <div class="preview-body">
+                        <div class="preview-row">
+                            <span class="preview-label"><i class="fas fa-calendar"></i> Date:</span>
+                            <span class="preview-value date-preview">Today</span>
+                        </div>
+                        <div class="preview-row">
+                            <span class="preview-label"><i class="fas fa-truck"></i> Supplier:</span>
+                            <span class="preview-value supplier-preview">Not selected</span>
+                        </div>
+                        
+                        <div class="products-preview">
+                            <span class="preview-label"><i class="fas fa-box"></i> Products:</span>
+                            <div class="products-preview-list">
+                                <p class="no-products-selected">No products selected</p>
+                            </div>
+                        </div>
+                        
+                        <div class="purchase-summary-preview">
+                            <div class="summary-preview-row">
+                                <span class="summary-preview-label">Subtotal:</span>
+                                <span class="summary-preview-value subtotal-preview">₹0.00</span>
+                            </div>
+                            <div class="summary-preview-row">
+                                <span class="summary-preview-label">Tax (<span class="tax-rate-preview">18</span>%):</span>
+                                <span class="summary-preview-value tax-preview">+₹0.00</span>
+                            </div>
+                            <div class="summary-preview-row total">
+                                <span class="summary-preview-label">Total Cost:</span>
+                                <span class="summary-preview-value total-preview">₹0.00</span>
+                            </div>
+                        </div>
+                        
+                        <div class="preview-row">
+                            <span class="preview-label"><i class="fas fa-credit-card"></i> Payment:</span>
+                            <span class="preview-value payment-mode-preview">Not selected</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="panel-footer">
+            <button class="cancel-btn">Cancel</button>
+            <button class="save-purchase-btn">Save Purchase</button>
+        </div>
+    </div>
+    
+    <div class="panel-overlay"></div>
+
+    <!-- Scripts -->
+    <script>
+        // Log that the base script is about to be loaded
+        console.log("About to load script.js");
+    </script>
+    <script src="script.js"></script>
+    <script>
+        // Log that purchases.js is about to be loaded
+        console.log("script.js loaded, about to load purchases.js");
+    </script>
+    <script src="purchases.js"></script>
+    <script>
+        console.log("Inline script is running");
+        // Immediate initialization in case the DOM loaded event already fired
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            console.log("Document is ready");
+            
+            // Force display of purchase content after a brief delay
+            setTimeout(function() {
+                console.log("Forcing display of purchase content");
+                
+                // Make sure the purchases content is visible
+                const purchasesContent = document.querySelector('.purchases-content');
+                if (purchasesContent) {
+                    purchasesContent.style.display = 'block';
+                }
+                
+                // Make sure the table view is active
+                const tableView = document.querySelector('.table-view');
+                if (tableView) {
+                    tableView.classList.add('active');
+                    tableView.style.display = 'block';
+                }
+                
+                // Make sure purchase table is visible
+                const purchaseTable = document.querySelector('.purchase-table-container');
+                if (purchaseTable) {
+                    purchaseTable.style.display = 'block';
+                }
+                
+                // Unhide any hidden elements
+                document.querySelectorAll('.table-view, .purchase-table, .purchase-table-container').forEach(el => {
+                    el.style.display = 'block';
+                });
+            }, 500);
+            
+            // Ensure the toggle buttons work
+            const toggleBtns = document.querySelectorAll('.toggle-btn');
+            const viewContainers = document.querySelectorAll('.view-container');
+            
+            toggleBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const viewType = this.getAttribute('data-view');
+                    console.log(`Switching to ${viewType} view`);
+                    
+                    // Toggle active class on buttons
+                    toggleBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Toggle active class on view containers
+                    viewContainers.forEach(container => {
+                        container.classList.remove('active');
+                        if (container.classList.contains(`${viewType}-view`)) {
+                            container.classList.add('active');
+                        }
+                    });
+                });
+            });
+            
+            // Setup product toggle buttons
+            const productsToggleBtns = document.querySelectorAll('.products-toggle');
+            productsToggleBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const productsDetails = this.nextElementSibling;
+                    productsDetails.classList.toggle('show');
+                    this.textContent = productsDetails.classList.contains('show') ? 'Hide Products' : 'View Products';
+                });
+            });
+            
+            // Setup new purchase panel
+            const newPurchaseBtn = document.querySelector('.new-purchase-btn');
+            const purchasePanel = document.querySelector('.new-purchase-panel');
+            const panelOverlay = document.querySelector('.panel-overlay');
+            const closeBtn = document.querySelector('.close-panel-btn');
+            const cancelBtn = document.querySelector('.cancel-btn');
+            
+            console.log("Elements:", {
+                newPurchaseBtn: !!newPurchaseBtn,
+                purchasePanel: !!purchasePanel,
+                panelOverlay: !!panelOverlay,
+                closeBtn: !!closeBtn,
+                cancelBtn: !!cancelBtn
+            });
+            
+            if (newPurchaseBtn && purchasePanel && panelOverlay) {
+                // Open panel
+                newPurchaseBtn.addEventListener('click', function() {
+                    console.log("New Purchase button clicked");
+                    purchasePanel.classList.add('open');
+                    panelOverlay.classList.add('active');
+                });
+                
+                // Close panel
+                const closePanel = function() {
+                    purchasePanel.classList.remove('open');
+                    panelOverlay.classList.remove('active');
+                };
+                
+                if (closeBtn) closeBtn.addEventListener('click', closePanel);
+                if (cancelBtn) cancelBtn.addEventListener('click', closePanel);
+                if (panelOverlay) panelOverlay.addEventListener('click', closePanel);
+            }
+            
+            // Setup Purchase sidebar link
+            const purchaseSidebarLink = document.querySelector('.sidebar-menu li.active a');
+            if (purchaseSidebarLink) {
+                console.log("Found Purchase sidebar link:", purchaseSidebarLink.href);
+                purchaseSidebarLink.addEventListener('click', function(e) {
+                    console.log("Purchase sidebar link clicked");
+                    e.preventDefault(); // Prevent default navigation
+                    
+                    // Make sure the purchases content is visible
+                    const purchasesContent = document.querySelector('.purchases-content');
+                    if (purchasesContent) {
+                        purchasesContent.style.display = 'block';
+                    }
+                    
+                    // Make sure the table view is active
+                    const tableView = document.querySelector('.table-view');
+                    if (tableView) {
+                        viewContainers.forEach(container => container.classList.remove('active'));
+                        tableView.classList.add('active');
+                        
+                        // Update toggle buttons
+                        toggleBtns.forEach(btn => {
+                            btn.classList.remove('active');
+                            if (btn.getAttribute('data-view') === 'table') {
+                                btn.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html> 

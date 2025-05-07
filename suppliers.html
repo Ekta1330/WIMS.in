@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suppliers | WIMS - Warehouse Inventory Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="suppliers.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2>WIMS<span>System</span></h2>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-th-large"></i> Dashboard</a></li>
+                    <li><a href="products.html"><i class="fas fa-box"></i> Products</a></li>
+                    <li><a href="customers.html"><i class="fas fa-users"></i> Customers</a></li>
+                    <li><a href="sales.html"><i class="fas fa-shopping-cart"></i> Sales</a></li>
+                    <li class="active"><a href="suppliers.html"><i class="fas fa-truck"></i> Supplier</a></li>
+                    <li><a href="purchases-new.html"><i class="fas fa-shopping-bag"></i> Purchase</a></li>
+                    <li><a href="#"><i class="fas fa-file-invoice-dollar"></i> Invoice & Bills</a></li>
+                    <li><a href="#"><i class="fas fa-exchange-alt"></i> Stock Transfer</a></li>
+                    <li><a href="#"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                </ul>
+            </nav>
+            
+            <div class="mobile-app-promo">
+                <div class="promo-icon"><i class="fas fa-mobile-alt"></i></div>
+                <div class="promo-text">
+                    <p>Try our mobile app</p>
+                    <a href="#">Download Now</a>
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <ul>
+                    <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                    <li><a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Navigation -->
+            <div class="top-nav">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                
+                <div class="user-actions">
+                    <div class="notification">
+                        <i class="far fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="messages">
+                        <i class="far fa-envelope"></i>
+                        <span class="badge">5</span>
+                    </div>
+                    <div class="user-profile">
+                        <img src="https://randomuser.me/api/portraits/men/44.jpg" alt="User Profile">
+                        <div class="dropdown">
+                            <span>John Doe</span>
+                            <i class="fas fa-chevron-down"></i>
+                            <div class="dropdown-content">
+                                <a href="#"><i class="fas fa-user"></i> Profile</a>
+                                <a href="#"><i class="fas fa-cog"></i> Settings</a>
+                                <a href="#"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Suppliers Content -->
+            <div class="suppliers-content">
+                <div class="suppliers-header">
+                    <h1>Supplier Management</h1>
+                    <div class="suppliers-actions">
+                        <div class="filter-options">
+                            <div class="search-supplier">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="supplier-search" placeholder="Search suppliers...">
+                            </div>
+                            <select id="product-category-filter">
+                                <option value="">All Categories</option>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Clothing">Clothing</option>
+                                <option value="Furniture">Furniture</option>
+                                <option value="Accessories">Accessories</option>
+                                <option value="Food">Food & Beverages</option>
+                            </select>
+                            <select id="status-filter">
+                                <option value="">All Statuses</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="view-toggle">
+                            <button class="toggle-btn active" data-view="table"><i class="fas fa-table"></i></button>
+                            <button class="toggle-btn" data-view="card"><i class="fas fa-th-large"></i></button>
+                        </div>
+                        <button class="add-supplier-btn"><i class="fas fa-plus"></i> Add New Supplier</button>
+                    </div>
+                </div>
+                
+                <!-- Supplier Table View -->
+                <div class="view-container table-view active">
+                    <div class="supplier-table-container">
+                        <table class="supplier-table">
+                            <thead>
+                                <tr>
+                                    <th>Supplier ID</th>
+                                    <th>Name</th>
+                                    <th>Company</th>
+                                    <th>Contact</th>
+                                    <th>Email</th>
+                                    <th>Address</th>
+                                    <th>GSTIN</th>
+                                    <th>Products Supplied</th>
+                                    <th>Credit Terms</th>
+                                    <th>Outstanding</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>SUP-001</td>
+                                    <td>Rajesh Kumar</td>
+                                    <td>VisualTech Electronics</td>
+                                    <td>+91 98765 12345</td>
+                                    <td>rajesh@visualtech.in</td>
+                                    <td>
+                                        <button class="address-toggle">View Address</button>
+                                        <div class="address-details">
+                                            <p>123 Tech Park, Electronics Zone, Bangalore, 560048</p>
+                                        </div>
+                                    </td>
+                                    <td>29AABCU9603R1ZX</td>
+                                    <td>
+                                        <button class="products-toggle">View Products</button>
+                                        <div class="products-details">
+                                            <p>4K Smart LED Television</p>
+                                            <p>Wireless Bluetooth Headphones</p>
+                                        </div>
+                                    </td>
+                                    <td>Net 30</td>
+                                    <td><span class="balance-status clear">₹0</span></td>
+                                    <td><span class="status-badge active">Active</span></td>
+                                    <td class="actions">
+                                        <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>SUP-002</td>
+                                    <td>Ananya Singh</td>
+                                    <td>FashionStyle Apparels</td>
+                                    <td>+91 87654 09876</td>
+                                    <td>ananya@fashionstyle.com</td>
+                                    <td>
+                                        <button class="address-toggle">View Address</button>
+                                        <div class="address-details">
+                                            <p>456 Fashion Square, Textile Hub, Delhi, 110001</p>
+                                        </div>
+                                    </td>
+                                    <td>07AADCF1234R9Z2</td>
+                                    <td>
+                                        <button class="products-toggle">View Products</button>
+                                        <div class="products-details">
+                                            <p>Men's Formal Cotton Shirt</p>
+                                        </div>
+                                    </td>
+                                    <td>Net 15</td>
+                                    <td><span class="balance-status pending">₹24,500</span></td>
+                                    <td><span class="status-badge active">Active</span></td>
+                                    <td class="actions">
+                                        <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>SUP-003</td>
+                                    <td>Vikram Mehta</td>
+                                    <td>ComfortPlus Furniture</td>
+                                    <td>+91 76543 23456</td>
+                                    <td>vikram@comfortplus.co.in</td>
+                                    <td>
+                                        <button class="address-toggle">View Address</button>
+                                        <div class="address-details">
+                                            <p>789 Industrial Estate, Furniture Zone, Mumbai, 400072</p>
+                                        </div>
+                                    </td>
+                                    <td>27AADFF5678R1Z3</td>
+                                    <td>
+                                        <button class="products-toggle">View Products</button>
+                                        <div class="products-details">
+                                            <p>Ergonomic Office Chair</p>
+                                            <p>Wooden Coffee Table</p>
+                                        </div>
+                                    </td>
+                                    <td>Net 45</td>
+                                    <td><span class="balance-status overdue">₹57,800</span></td>
+                                    <td><span class="status-badge active">Active</span></td>
+                                    <td class="actions">
+                                        <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>SUP-004</td>
+                                    <td>Meera Reddy</td>
+                                    <td>HydroLife Products</td>
+                                    <td>+91 65432 34567</td>
+                                    <td>meera@hydrolife.in</td>
+                                    <td>
+                                        <button class="address-toggle">View Address</button>
+                                        <div class="address-details">
+                                            <p>345 Green Valley, Eco Zone, Chennai, 600028</p>
+                                        </div>
+                                    </td>
+                                    <td>33AADTT7890R2Z5</td>
+                                    <td>
+                                        <button class="products-toggle">View Products</button>
+                                        <div class="products-details">
+                                            <p>Stainless Steel Water Bottle</p>
+                                        </div>
+                                    </td>
+                                    <td>Net 30</td>
+                                    <td><span class="balance-status clear">₹0</span></td>
+                                    <td><span class="status-badge active">Active</span></td>
+                                    <td class="actions">
+                                        <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>SUP-005</td>
+                                    <td>Sunil Gupta</td>
+                                    <td>NatureFresh Organics</td>
+                                    <td>+91 54321 45678</td>
+                                    <td>sunil@naturefresh.com</td>
+                                    <td>
+                                        <button class="address-toggle">View Address</button>
+                                        <div class="address-details">
+                                            <p>567 Organic Farms, Rural District, Pune, 411042</p>
+                                        </div>
+                                    </td>
+                                    <td>21AACVT8901R3Z6</td>
+                                    <td>
+                                        <button class="products-toggle">View Products</button>
+                                        <div class="products-details">
+                                            <p>Organic Honey</p>
+                                        </div>
+                                    </td>
+                                    <td>COD</td>
+                                    <td><span class="balance-status clear">₹0</span></td>
+                                    <td><span class="status-badge inactive">Inactive</span></td>
+                                    <td class="actions">
+                                        <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>SUP-006</td>
+                                    <td>Arjun Patel</td>
+                                    <td>TechGuard Accessories</td>
+                                    <td>+91 43210 56789</td>
+                                    <td>arjun@techguard.co.in</td>
+                                    <td>
+                                        <button class="address-toggle">View Address</button>
+                                        <div class="address-details">
+                                            <p>890 Tech Hub, Mobile Zone, Hyderabad, 500032</p>
+                                        </div>
+                                    </td>
+                                    <td>36AAHYT9012R4Z7</td>
+                                    <td>
+                                        <button class="products-toggle">View Products</button>
+                                        <div class="products-details">
+                                            <p>Smartphone Case</p>
+                                        </div>
+                                    </td>
+                                    <td>Net 15</td>
+                                    <td><span class="balance-status pending">₹12,300</span></td>
+                                    <td><span class="status-badge active">Active</span></td>
+                                    <td class="actions">
+                                        <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Supplier Card View -->
+                <div class="view-container card-view">
+                    <div class="supplier-cards">
+                        <!-- Supplier Card 1 -->
+                        <div class="supplier-card">
+                            <div class="card-header">
+                                <div class="supplier-name">
+                                    <h3>Rajesh Kumar</h3>
+                                    <span class="supplier-id">SUP-001</span>
+                                </div>
+                                <div class="supplier-status">
+                                    <span class="status-badge active">Active</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="company-info">
+                                    <span class="info-label"><i class="fas fa-building"></i> Company:</span>
+                                    <span class="info-value">VisualTech Electronics</span>
+                                </div>
+                                <div class="info-group">
+                                    <div class="info-item">
+                                        <span class="info-label"><i class="fas fa-phone"></i> Contact:</span>
+                                        <span class="info-value">+91 98765 12345</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label"><i class="fas fa-envelope"></i> Email:</span>
+                                        <span class="info-value">rajesh@visualtech.in</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label"><i class="fas fa-map-marker-alt"></i> Address:</span>
+                                        <span class="info-value address-preview">123 Tech Park, Electronics Zone, Bangalore...</span>
+                                        <div class="full-address">
+                                            <p>123 Tech Park, Electronics Zone, Bangalore, 560048</p>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label"><i class="fas fa-id-card"></i> GSTIN:</span>
+                                        <span class="info-value">29AABCU9603R1ZX</span>
+                                    </div>
+                                </div>
+                                <div class="products-list">
+                                    <span class="info-label"><i class="fas fa-box"></i> Products Supplied:</span>
+                                    <ul>
+                                        <li>4K Smart LED Television</li>
+                                        <li>Wireless Bluetooth Headphones</li>
+                                    </ul>
+                                </div>
+                                <div class="financial-info">
+                                    <div class="financial-item">
+                                        <span class="fin-label">Credit Terms</span>
+                                        <span class="fin-value">Net 30</span>
+                                    </div>
+                                    <div class="financial-item">
+                                        <span class="fin-label">Outstanding</span>
+                                        <span class="fin-value balance-status clear">₹0</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button class="card-btn view"><i class="fas fa-eye"></i> View</button>
+                                <button class="card-btn edit"><i class="fas fa-edit"></i> Edit</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Supplier Card 2 -->
+                        <div class="supplier-card">
+                            <div class="card-header">
+                                <div class="supplier-name">
+                                    <h3>Ananya Singh</h3>
+                                    <span class="supplier-id">SUP-002</span>
+                                </div>
+                                <div class="supplier-status">
+                                    <span class="status-badge active">Active</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="company-info">
+                                    <span class="info-label"><i class="fas fa-building"></i> Company:</span>
+                                    <span class="info-value">FashionStyle Apparels</span>
+                                </div>
+                                <div class="info-group">
+                                    <div class="info-item">
+                                        <span class="info-label"><i class="fas fa-phone"></i> Contact:</span>
+                                        <span class="info-value">+91 87654 09876</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label"><i class="fas fa-envelope"></i> Email:</span>
+                                        <span class="info-value">ananya@fashionstyle.com</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label"><i class="fas fa-map-marker-alt"></i> Address:</span>
+                                        <span class="info-value address-preview">456 Fashion Square, Textile Hub, Delhi...</span>
+                                        <div class="full-address">
+                                            <p>456 Fashion Square, Textile Hub, Delhi, 110001</p>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label"><i class="fas fa-id-card"></i> GSTIN:</span>
+                                        <span class="info-value">07AADCF1234R9Z2</span>
+                                    </div>
+                                </div>
+                                <div class="products-list">
+                                    <span class="info-label"><i class="fas fa-box"></i> Products Supplied:</span>
+                                    <ul>
+                                        <li>Men's Formal Cotton Shirt</li>
+                                    </ul>
+                                </div>
+                                <div class="financial-info">
+                                    <div class="financial-item">
+                                        <span class="fin-label">Credit Terms</span>
+                                        <span class="fin-value">Net 15</span>
+                                    </div>
+                                    <div class="financial-item">
+                                        <span class="fin-label">Outstanding</span>
+                                        <span class="fin-value balance-status pending">₹24,500</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button class="card-btn view"><i class="fas fa-eye"></i> View</button>
+                                <button class="card-btn edit"><i class="fas fa-edit"></i> Edit</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Additional cards (similar structure) -->
+                    </div>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="pagination">
+                    <button class="page-btn prev"><i class="fas fa-chevron-left"></i></button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <span class="page-dots">...</span>
+                    <button class="page-btn">8</button>
+                    <button class="page-btn next"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add New Supplier Panel -->
+    <div class="add-supplier-panel">
+        <div class="panel-header">
+            <h2>Add New Supplier</h2>
+            <button class="close-panel-btn"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <div class="panel-body">
+            <form id="add-supplier-form">
+                <div class="form-section">
+                    <h3>Basic Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="supplier-id">Supplier ID</label>
+                            <div class="id-input-group">
+                                <input type="text" id="supplier-id" value="SUP-" placeholder="Auto-generated">
+                                <button type="button" class="generate-id-btn" title="Generate ID"><i class="fas fa-sync-alt"></i></button>
+                            </div>
+                            <small class="hint-text">Leave as is for auto-generation</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="supplier-status">Status</label>
+                            <select id="supplier-status">
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="supplier-name">Contact Person Name</label>
+                            <input type="text" id="supplier-name" placeholder="Enter full name">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="company-name">Company Name</label>
+                            <input type="text" id="company-name" placeholder="Enter company name">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Contact Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="supplier-contact">Contact Number</label>
+                            <input type="tel" id="supplier-contact" placeholder="e.g., +91 98765 43210">
+                        </div>
+                        <div class="form-group">
+                            <label for="supplier-email">Email Address</label>
+                            <input type="email" id="supplier-email" placeholder="Enter email address">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Address Information</h3>
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="supplier-address">Address</label>
+                            <textarea id="supplier-address" rows="3" placeholder="Enter complete address"></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Tax Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="gstin">GSTIN</label>
+                            <input type="text" id="gstin" placeholder="e.g., 29AABCU9603R1ZX">
+                            <small class="hint-text">Goods and Services Tax Identification Number</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Products Supplied</h3>
+                    <div class="product-supply-container">
+                        <div class="product-supply-list">
+                            <!-- Product entries will be added here dynamically -->
+                        </div>
+                        <button type="button" class="add-product-btn"><i class="fas fa-plus"></i> Add Product</button>
+                        
+                        <div class="product-entry-template" style="display: none;">
+                            <div class="product-entry">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <select class="product-select">
+                                            <option value="">Select Product</option>
+                                            <option value="PRD-001">Wireless Bluetooth Headphones</option>
+                                            <option value="PRD-002">4K Smart LED Television</option>
+                                            <option value="PRD-003">Men's Formal Cotton Shirt</option>
+                                            <option value="PRD-004">Ergonomic Office Chair</option>
+                                            <option value="PRD-005">Stainless Steel Water Bottle</option>
+                                            <option value="PRD-006">Organic Honey</option>
+                                            <option value="PRD-007">Smartphone Case</option>
+                                            <option value="PRD-008">Wooden Coffee Table</option>
+                                        </select>
+                                    </div>
+                                    <button type="button" class="remove-product-btn"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Financial Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="credit-terms">Credit Terms</label>
+                            <select id="credit-terms">
+                                <option value="">Select Credit Terms</option>
+                                <option value="COD">Cash on Delivery</option>
+                                <option value="Net 15">Net 15</option>
+                                <option value="Net 30">Net 30</option>
+                                <option value="Net 45">Net 45</option>
+                                <option value="Net 60">Net 60</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="outstanding-balance">Outstanding Balance</label>
+                            <div class="price-input">
+                                <span class="currency">₹</span>
+                                <input type="number" id="outstanding-balance" placeholder="0.00">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn">Cancel</button>
+                    <button type="submit" class="save-btn">Save Supplier</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="panel-overlay"></div>
+
+    <script src="script.js"></script>
+    <script src="suppliers.js"></script>
+</body>
+</html> 
