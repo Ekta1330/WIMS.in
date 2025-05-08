@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Warehouse Inventory Management System
 
 A comprehensive dashboard for warehouse and inventory management with features for product management, sales, purchases, inventory tracking, stock transfers, and reports.
@@ -75,3 +76,6 @@ The server provides the following endpoints for report generation:
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details. 
+=======
+# WIMS.in
+>>>>>>> 5aeb1cc3f8dc9c48f5f2fdf9d60eed8038a542e2
