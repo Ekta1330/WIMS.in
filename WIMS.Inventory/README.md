@@ -2,6 +2,37 @@
 
 A comprehensive web-based warehouse inventory management system with features for tracking products, managing inventory, handling sales and purchases, generating invoices, and creating reports.
 
+## Custom Domain Setup
+
+To access the application using the custom domain `WIMS.org` (e.g., http://WIMS.org/reports.html), follow these steps:
+
+### Windows Setup
+
+1. Edit your hosts file:
+   - Open Notepad as Administrator
+   - Open the file: `C:\Windows\System32\drivers\etc\hosts`
+   - Add this line at the end: `127.0.0.1    WIMS.org`
+   - Save the file
+
+2. Start the application with custom domain:
+   - Run the provided batch file: `start-custom-domain.bat`
+   - Or use the npm script: `npm run start:custom-domain`
+
+### macOS/Linux Setup
+
+1. Edit your hosts file:
+   - Open Terminal
+   - Run: `sudo nano /etc/hosts`
+   - Add this line: `127.0.0.1    WIMS.org`
+   - Save with Ctrl+O, then exit with Ctrl+X
+
+2. Start the application with custom domain:
+   - Make the script executable: `chmod +x start-custom-domain.sh`
+   - Run the script: `./start-custom-domain.sh`
+   - Or use the npm script: `sudo npm run start:custom-domain`
+
+For more detailed instructions, refer to the [DOMAIN_SETUP.md](./DOMAIN_SETUP.md) file.
+
 ## Project Structure
 
 ```

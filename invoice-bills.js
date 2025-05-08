@@ -1,6 +1,23 @@
+// Add to the top of the file for better PDF handling
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize the invoice management system
     initInvoiceSystem();
+    
+    // Add click event listener for all PDF generate buttons
+    const pdfButtons = document.querySelectorAll('#preview-generate-pdf-btn, #generate-invoice-pdf-btn, .generate-pdf-btn, .action-btn.pdf, .card-btn.pdf');
+    pdfButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            const id = this.getAttribute('data-id');
+            if (id) {
+                // This is for existing invoice PDFs
+                generatePDF(id);
+            } else {
+                // This is for the new invoice form
+                generateInvoicePDF();
+            }
+            e.preventDefault();
+        });
+    });
 });
 
 function initInvoiceSystem() {
@@ -632,7 +649,7 @@ function generatePDF(id) {
             id: "INV-2023-001",
             invoiceNumber: "INV-2023-001",
             issueDate: "2023-11-15",
-            dueDate: "",
+            dueDate: "2023-11-30",
             customerName: "Vikram Sharma",
             customerAddress: "123 Main St, Mumbai",
             customerEmail: "vikram@example.com",
@@ -643,6 +660,7 @@ function generatePDF(id) {
             ],
             subtotal: 39997,
             tax: 7199.46,
+            taxRate: 18,
             additionalDiscount: 2000,
             shipping: 0,
             grandTotal: 45196.46,
@@ -655,46 +673,157 @@ function generatePDF(id) {
     // Find the invoice with the matching ID
     const invoice = invoices.find(inv => inv.id === id) || invoices[0];
     
-    // Make API request to generate PDF
-    fetch('http://localhost:3000/api/invoice/generate-pdf', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(invoice)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        // Hide generating toast
-        hideToast('pdf-generating');
+    // Create PDF using jsPDF
+    try {
+        // Initialize PDF
+        const pdf = new jspdf.jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4'
+        });
         
-        // Show success toast
+        // Set default font
+        pdf.setFont("helvetica");
+        
+        // Add header
+        pdf.setFontSize(22);
+        pdf.setTextColor(44, 62, 80); // Dark text color
+        pdf.text("INVOICE", 105, 20, { align: "center" });
+        
+        // Add invoice info
+        pdf.setFontSize(10);
+        pdf.setTextColor(52, 73, 94);
+        pdf.text(`Invoice #: ${invoice.invoiceNumber}`, 200, 20, { align: "right" });
+        pdf.text(`Date: ${formatDate(invoice.issueDate)}`, 200, 25, { align: "right" });
+        pdf.text(`Due Date: ${invoice.dueDate ? formatDate(invoice.dueDate) : 'N/A'}`, 200, 30, { align: "right" });
+        
+        // Add company info (sender)
+        pdf.setFontSize(12);
+        pdf.setFont("helvetica", "bold");
+        pdf.text("From:", 15, 40);
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(10);
+        pdf.text("Your Company Name", 15, 45);
+        pdf.text("Your Company Address", 15, 50);
+        
+        // Add customer info (recipient)
+        pdf.setFontSize(12);
+        pdf.setFont("helvetica", "bold");
+        pdf.text("To:", 120, 40);
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(10);
+        pdf.text(invoice.customerName, 120, 45);
+        if (invoice.customerAddress) {
+            const addressLines = pdf.splitTextToSize(invoice.customerAddress, 70);
+            pdf.text(addressLines, 120, 50);
+            let yPos = 50 + addressLines.length * 5;
+            if (invoice.customerEmail) pdf.text(`Email: ${invoice.customerEmail}`, 120, yPos += 5);
+            if (invoice.customerPhone) pdf.text(`Phone: ${invoice.customerPhone}`, 120, yPos += 5);
+        } else {
+            let yPos = 45;
+            if (invoice.customerEmail) pdf.text(`Email: ${invoice.customerEmail}`, 120, yPos += 5);
+            if (invoice.customerPhone) pdf.text(`Phone: ${invoice.customerPhone}`, 120, yPos += 5);
+        }
+        
+        // Add items table
+        const tableColumns = [
+            { header: 'Item Description', dataKey: 'description' },
+            { header: 'Quantity', dataKey: 'quantity' },
+            { header: 'Rate', dataKey: 'rate' },
+            { header: 'Discount', dataKey: 'discount' },
+            { header: 'Amount', dataKey: 'amount' }
+        ];
+        
+        const tableRows = invoice.items.map(item => ({
+            description: item.description,
+            quantity: item.quantity.toString(),
+            rate: formatCurrency(item.rate).replace('₹', ''),
+            discount: formatCurrency(item.discount).replace('₹', ''),
+            amount: formatCurrency(item.amount).replace('₹', '')
+        }));
+        
+        pdf.autoTable({
+            startY: 70,
+            head: [tableColumns.map(col => col.header)],
+            body: tableRows,
+            theme: 'grid',
+            headStyles: {
+                fillColor: [108, 92, 231],
+                textColor: [255, 255, 255],
+                fontStyle: 'bold'
+            },
+            columnStyles: {
+                0: { cellWidth: 80 }, // Description
+                1: { cellWidth: 20, halign: 'center' }, // Quantity
+                2: { cellWidth: 25, halign: 'right' }, // Rate
+                3: { cellWidth: 25, halign: 'right' }, // Discount
+                4: { cellWidth: 30, halign: 'right' }  // Amount
+            },
+            styles: {
+                fontSize: 9,
+                cellPadding: 3
+            },
+            didDrawPage: function(data) {
+                // Add page number
+                pdf.setFontSize(8);
+                pdf.text(`Page ${pdf.internal.getNumberOfPages()}`, 
+                    pdf.internal.pageSize.width - 20, 
+                    pdf.internal.pageSize.height - 10);
+            }
+        });
+        
+        // Add summary section
+        const finalY = pdf.lastAutoTable.finalY + 10;
+        
+        // Summary table
+        pdf.autoTable({
+            startY: finalY,
+            body: [
+                ['Subtotal:', formatCurrency(invoice.subtotal).replace('₹', '')],
+                [`Tax (${invoice.taxRate || 18}%):`, formatCurrency(invoice.tax).replace('₹', '')],
+                ['Additional Discount:', formatCurrency(invoice.additionalDiscount).replace('₹', '')],
+                ['Shipping:', formatCurrency(invoice.shipping || 0).replace('₹', '')],
+                ['Grand Total:', formatCurrency(invoice.grandTotal).replace('₹', '')]
+            ],
+            theme: 'plain',
+            columnStyles: {
+                0: { cellWidth: 150, fontStyle: 'bold' },
+                1: { cellWidth: 30, halign: 'right' }
+            },
+            styles: {
+                fontSize: 9,
+                cellPadding: 3
+            },
+            margin: { left: 120 }
+        });
+        
+        // Add notes section
+        if (invoice.notes) {
+            const finalY2 = pdf.lastAutoTable.finalY + 10;
+            pdf.setFontSize(10);
+            pdf.setFont("helvetica", "bold");
+            pdf.text("Notes:", 15, finalY2);
+            pdf.setFont("helvetica", "normal");
+            
+            const noteLines = pdf.splitTextToSize(invoice.notes, 180);
+            pdf.text(noteLines, 15, finalY2 + 5);
+        }
+        
+        // Add footer
+        pdf.setFontSize(8);
+        pdf.setTextColor(128, 128, 128);
+        pdf.text("Thank you for your business!", 105, pdf.internal.pageSize.height - 10, { align: "center" });
+        
+        // Save and open PDF
+        const pdfBlob = pdf.output('blob');
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+        
+        // Hide generating toast and show success toast
+        hideToast('pdf-generating');
         showToast('pdf-ready');
         
-        // Extract the data for the PDF
-        const { pdfContent, downloadUrl, viewMode } = data;
-        
-        // Open the PDF instantly in a new tab
-        if (pdfContent) {
-            // Create a new tab with the HTML content
-            const newTab = window.open('', '_blank');
-            newTab.document.write(pdfContent);
-            newTab.document.close();
-            newTab.focus(); // Focus on the new tab
-        } else {
-            // Fallback to opening the download URL
-            window.open(downloadUrl, '_blank');
-        }
-        
-        // Hide success toast after 2 seconds
-        setTimeout(() => {
-            hideToast('pdf-ready');
-        }, 2000);
+        // Open PDF in new tab
+        window.open(pdfUrl, '_blank');
         
         // Mark the row as having a new download
         const row = document.querySelector(`.expandable-row[data-id="${id}"]`);
@@ -704,33 +833,91 @@ function generatePDF(id) {
                 row.classList.remove('new-download');
             }, 10000);
         }
-    })
-    .catch(error => {
-        console.error('Error generating PDF:', error);
         
-        // Hide generating toast
-        hideToast('pdf-generating');
-        
-        // Show error toast
-        showToast('pdf-error');
+        // Hide success toast after 2 seconds
         setTimeout(() => {
-            hideToast('pdf-error');
-        }, 3000);
-    });
-}
-
-function showToast(toastClass) {
-    const toast = document.querySelector(`.toast.${toastClass}`);
-    if (toast) {
-        toast.classList.add('show');
+            hideToast('pdf-ready');
+        }, 2000);
+        
+    } catch (error) {
+        console.error('Error creating PDF:', error);
+        hideToast('pdf-generating');
+        showToast('pdf-error');
     }
 }
 
-function hideToast(toastClass) {
-    const toast = document.querySelector(`.toast.${toastClass}`);
+// Show toast notification
+function showToast(type) {
+    // Hide any existing toasts
+    hideAllToasts();
+    
+    // Create toast HTML
+    let toast = document.createElement('div');
+    toast.id = `${type}-toast`;
+    toast.classList.add('toast-notification');
+    
+    let iconHtml = '';
+    let message = '';
+    
+    switch(type) {
+        case 'pdf-generating':
+            toast.classList.add('generating');
+            iconHtml = '<div class="loading-spinner"></div>';
+            message = 'Generating PDF...';
+            break;
+        case 'pdf-ready':
+            toast.classList.add('ready');
+            iconHtml = '<i class="fas fa-check-circle"></i>';
+            message = 'PDF successfully generated!';
+            break;
+        case 'pdf-error':
+            toast.classList.add('error');
+            iconHtml = '<i class="fas fa-exclamation-circle"></i>';
+            message = 'Error generating PDF. Please try again.';
+            break;
+        default:
+            iconHtml = '<i class="fas fa-info-circle"></i>';
+            message = type;
+    }
+    
+    toast.innerHTML = `
+        <div class="icon">${iconHtml}</div>
+        <div class="message">${message}</div>
+    `;
+    
+    // Add to body
+    document.body.appendChild(toast);
+    
+    // Show the toast
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 10);
+}
+
+// Hide specific toast
+function hideToast(type) {
+    const toast = document.getElementById(`${type}-toast`);
     if (toast) {
         toast.classList.remove('show');
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 300);
     }
+}
+
+// Hide all toasts
+function hideAllToasts() {
+    const toasts = document.querySelectorAll('.toast-notification');
+    toasts.forEach(toast => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 300);
+    });
 }
 
 function applyFilters() {
@@ -759,23 +946,23 @@ function capitalizeFirstLetter(string) {
 
 // Invoice Creation Functions
 function initInvoiceCreation() {
-    // Initialize logo upload
+    // Initialize invoice creation form
+    initInvoiceTabs();
     initLogoUpload();
-    
-    // Initialize invoice items
     initInvoiceItems();
-    
-    // Initialize tax calculation
     initTaxCalculation();
+    initCustomerDetailsRealTimeUpdate(); // Add this line
+    initInvoiceModalButtons();
+    initRealTimeCurrencyFormatting(); // Add real-time currency formatting
     
-    // Initialize date fields with current date
+    // Set current date
     setCurrentDate();
     
-    // Initialize invoice modal buttons
-    initInvoiceModalButtons();
-    
-    // Initialize tabs
-    initInvoiceTabs();
+    // Create invoice button
+    const createInvoiceBtn = document.querySelector('.create-invoice-btn');
+    if (createInvoiceBtn) {
+        createInvoiceBtn.addEventListener('click', openCreateInvoiceModal);
+    }
 }
 
 function initInvoiceTabs() {
@@ -788,11 +975,38 @@ function initInvoiceTabs() {
     tabButtons.forEach(button => {
         button.addEventListener('click', function() {
             const tabId = this.getAttribute('data-tab');
-            switchToTab(tabId);
+            
+            // Hide all tabs
+            tabContents.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            tabButtons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(`${tabId}-tab`).classList.add('active');
+            
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            // If switching to preview tab, update the preview
+            if (tabId === 'preview-submit') {
+                // Update preview with the latest data
+                updateInvoicePreview();
+                
+                // Set up real-time sync for preview
+                setupPreviewSync(true);
+            } else {
+                // Disable real-time sync when not on preview tab
+                setupPreviewSync(false);
+            }
         });
     });
     
-    // Next tab button click handler
+    // Next button click handler
     nextTabButtons.forEach(button => {
         button.addEventListener('click', function() {
             const nextTabId = this.getAttribute('data-next');
@@ -800,49 +1014,13 @@ function initInvoiceTabs() {
         });
     });
     
-    // Previous tab button click handler
+    // Previous button click handler
     prevTabButtons.forEach(button => {
         button.addEventListener('click', function() {
             const prevTabId = this.getAttribute('data-prev');
             switchToTab(prevTabId);
         });
     });
-    
-    // Function to switch to a specific tab
-    function switchToTab(tabId) {
-        // Find the tab button for the tab
-        const tabButton = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
-        if (!tabButton) return;
-        
-        // Update active tab button
-        tabButtons.forEach(btn => btn.classList.remove('active'));
-        tabButton.classList.add('active');
-        
-        // Update active tab content
-        tabContents.forEach(content => {
-            content.classList.remove('active');
-            if (content.id === `${tabId}-tab`) {
-                content.classList.add('active');
-                
-                // Scroll to top of tab content
-                content.scrollTop = 0;
-                
-                // If this is the preview tab, update the preview
-                if (tabId === 'preview-submit') {
-                    updateInvoicePreview();
-                    
-                    // Ensure the invoice preview container is scrolled to top
-                    const previewContainer = document.querySelector('.invoice-preview-container');
-                    if (previewContainer) {
-                        previewContainer.scrollTop = 0;
-                    }
-                }
-            }
-        });
-        
-        // Scroll tab into view if needed
-        tabButton.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-    }
 }
 
 function openCreateInvoiceModal() {
@@ -935,8 +1113,13 @@ function initInvoiceItems() {
             addInvoiceItem();
         });
         
-        // Initialize first row
-        initItemRow(document.querySelector('.item-row'));
+        // Initialize all existing item rows
+        document.querySelectorAll('.item-row').forEach(row => {
+            initItemRow(row);
+        });
+        
+        // Calculate initial totals
+        updateSummaryWithFeedback();
     }
     
     // Add event listener for dynamic elements (item removal and calculation)
@@ -945,7 +1128,7 @@ function initInvoiceItems() {
             const row = e.target.closest('.item-row');
             if (document.querySelectorAll('.item-row').length > 1) {
                 row.remove();
-                calculateInvoiceTotal();
+                updateSummaryWithFeedback();
             } else {
                 // Don't remove the last row, just clear it
                 const inputs = row.querySelectorAll('input');
@@ -953,7 +1136,7 @@ function initInvoiceItems() {
                     input.value = input.type === 'number' && input.classList.contains('item-quantity') ? '1' : '';
                 });
                 row.querySelector('.item-amount').textContent = '0.00';
-                calculateInvoiceTotal();
+                updateSummaryWithFeedback();
             }
         }
     });
@@ -963,13 +1146,27 @@ function initItemRow(row) {
     const quantityInput = row.querySelector('.item-quantity');
     const rateInput = row.querySelector('.item-rate');
     const discountInput = row.querySelector('.item-discount');
+    const descriptionInput = row.querySelector('.item-description');
     const amountSpan = row.querySelector('.item-amount');
     
-    // Calculate on input change
+    // Update calculations in real-time as user types
     [quantityInput, rateInput, discountInput].forEach(input => {
         input.addEventListener('input', function() {
             calculateItemAmount(row);
+            // Update preview in real-time if preview tab is active
+            if (document.getElementById('preview-submit-tab').classList.contains('active')) {
+                updatePreviewItems();
+                updatePreviewSummary();
+            }
         });
+    });
+    
+    // Update description in real-time for preview
+    descriptionInput.addEventListener('input', function() {
+        // Update preview in real-time if preview tab is active
+        if (document.getElementById('preview-submit-tab').classList.contains('active')) {
+            updatePreviewItems();
+        }
     });
 }
 
@@ -1017,11 +1214,22 @@ function calculateItemAmount(row) {
     // Calculate amount (quantity * rate - discount)
     const amount = quantity * rate - discount;
     
+    // Get current amount for comparison
+    const currentAmount = parseFloat(row.querySelector('.item-amount').textContent) || 0;
+    
     // Update amount display
     row.querySelector('.item-amount').textContent = amount.toFixed(2);
     
-    // Recalculate invoice total
-    calculateInvoiceTotal();
+    // Add highlight effect if the amount changed
+    if (Math.abs(amount - currentAmount) > 0.01) {
+        row.querySelector('.item-amount').classList.add('value-changed');
+        setTimeout(() => {
+            row.querySelector('.item-amount').classList.remove('value-changed');
+        }, 500);
+    }
+    
+    // Update summary with visual feedback
+    updateSummaryWithFeedback();
 }
 
 function calculateInvoiceTotal() {
@@ -1030,7 +1238,7 @@ function calculateInvoiceTotal() {
     const taxRateInput = document.getElementById('tax-rate');
     const taxElement = document.getElementById('summary-tax');
     const additionalDiscountInput = document.getElementById('additional-discount');
-    const shippingCostInput = document.getElementById('shipping-charges');
+    const shippingCostInput = document.getElementById('shipping-cost'); // Fixed ID to match HTML
     const grandTotalElement = document.getElementById('summary-grand-total');
     
     // Calculate subtotal
@@ -1050,33 +1258,77 @@ function calculateInvoiceTotal() {
     // Calculate grand total
     const grandTotal = subtotal + taxAmount - additionalDiscount + shippingCost;
     
-    // Update display
-    subtotalElement.textContent = subtotal.toFixed(2);
-    taxElement.textContent = taxAmount.toFixed(2);
+    // Update display with animation for better UX
+    animateValueChange(subtotalElement, subtotal.toFixed(2));
+    animateValueChange(taxElement, taxAmount.toFixed(2));
     
     if (document.getElementById('summary-discount')) {
-        document.getElementById('summary-discount').textContent = additionalDiscount.toFixed(2);
+        animateValueChange(document.getElementById('summary-discount'), additionalDiscount.toFixed(2));
     }
     
-    grandTotalElement.textContent = grandTotal.toFixed(2);
+    animateValueChange(grandTotalElement, grandTotal.toFixed(2));
+    
+    // Update preview in real-time if preview tab is active
+    if (document.getElementById('preview-submit-tab') && 
+        document.getElementById('preview-submit-tab').classList.contains('active')) {
+        updatePreviewSummary();
+    }
+    
+    return { subtotal, taxAmount, additionalDiscount, shippingCost, grandTotal };
+}
+
+// Helper function to animate value changes for better UX feedback
+function animateValueChange(element, newValue) {
+    if (!element) return;
+    
+    // Add a subtle highlight effect
+    element.classList.add('value-changed');
+    
+    // Update the value
+    element.textContent = newValue;
+    
+    // Remove the highlight effect after animation completes
+    setTimeout(() => {
+        element.classList.remove('value-changed');
+    }, 500);
 }
 
 function initTaxCalculation() {
     const taxRateInput = document.getElementById('tax-rate');
     const additionalDiscountInput = document.getElementById('additional-discount');
-    const shippingCostInput = document.getElementById('shipping-charges');
+    const shippingCostInput = document.getElementById('shipping-cost');
     
+    // Update in real-time as user types with debounce for better performance
     if (taxRateInput) {
-        taxRateInput.addEventListener('input', calculateInvoiceTotal);
+        taxRateInput.addEventListener('input', debounce(function() {
+            updateSummaryWithFeedback();
+        }, 100));
     }
     
     if (additionalDiscountInput) {
-        additionalDiscountInput.addEventListener('input', calculateInvoiceTotal);
+        additionalDiscountInput.addEventListener('input', debounce(function() {
+            updateSummaryWithFeedback();
+        }, 100));
     }
     
     if (shippingCostInput) {
-        shippingCostInput.addEventListener('input', calculateInvoiceTotal);
+        shippingCostInput.addEventListener('input', debounce(function() {
+            updateSummaryWithFeedback();
+        }, 100));
     }
+}
+
+// Debounce function to improve performance during rapid input
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
 }
 
 function setCurrentDate() {
@@ -1251,46 +1503,28 @@ function generateInvoicePDF() {
     // Show generating toast
     showToast('pdf-generating');
     
-    // Collect form data
-    const invoiceData = {
-        invoiceNumber: document.getElementById('invoice-number').value,
-        issueDate: document.getElementById('issue-date').value,
-        dueDate: document.getElementById('due-date').value,
-        customerName: document.getElementById('customer-supplier').value,
-        customerAddress: document.getElementById('customer-address').value,
-        customerEmail: document.getElementById('customer-email').value,
-        customerPhone: document.getElementById('customer-phone').value,
-        currency: document.getElementById('currency').value || 'INR',
-        invoiceType: document.getElementById('invoice-type').value || 'sales',
-        paymentTerms: document.getElementById('payment-terms').value || 'due-receipt',
-        items: [],
-        notes: document.getElementById('invoice-notes').value,
-        status: 'paid', // Default status
-        handler: 'Ekta Sandhu', // Current user
-        generatedAt: new Date().toISOString()
-    };
-    
-    // Get logo data if available
-    const logoImg = document.getElementById('logo-preview-img');
-    if (logoImg && logoImg.src && !logoImg.src.endsWith('placeholder.png') && logoImg.style.display !== 'none') {
-        invoiceData.logoData = logoImg.src;
-    }
+    // Collect all invoice data
+    const invoiceNumber = document.getElementById('invoice-number').value;
+    const issueDate = formatDate(document.getElementById('issue-date').value);
+    const dueDate = formatDate(document.getElementById('due-date').value);
+    const customerName = document.getElementById('customer-supplier').value;
+    const customerAddress = document.getElementById('customer-address').value;
+    const customerEmail = document.getElementById('customer-email').value;
+    const customerPhone = document.getElementById('customer-phone').value;
     
     // Collect items data
     const itemRows = document.querySelectorAll('.item-row');
-    let itemsTotal = 0;
+    const items = [];
     
     itemRows.forEach(row => {
         const description = row.querySelector('.item-description').value;
         const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
         const rate = parseFloat(row.querySelector('.item-rate').value) || 0;
         const discount = parseFloat(row.querySelector('.item-discount').value) || 0;
-        const amount = parseFloat(row.querySelector('.item-amount').textContent.replace(/[^0-9.]/g, '')) || 0;
+        const amount = parseFloat(row.querySelector('.item-amount').textContent) || 0;
         
-        itemsTotal += amount;
-        
-        if (description && rate > 0) {
-            invoiceData.items.push({
+        if (description && quantity > 0) {
+            items.push({
                 description,
                 quantity,
                 rate,
@@ -1300,101 +1534,201 @@ function generateInvoicePDF() {
         }
     });
     
-    // Add summary data
-    invoiceData.subtotal = parseFloat(document.getElementById('summary-subtotal').textContent.replace(/[^0-9.]/g, '')) || itemsTotal;
-    
+    // Get totals
+    const subtotal = parseFloat(document.getElementById('summary-subtotal').textContent) || 0;
     const taxRate = parseFloat(document.getElementById('tax-rate').value) || 0;
-    const taxAmount = parseFloat(document.getElementById('summary-tax').textContent.replace(/[^0-9.]/g, '')) || 0;
+    const taxAmount = parseFloat(document.getElementById('summary-tax').textContent) || 0;
+    const additionalDiscount = parseFloat(document.getElementById('additional-discount').value) || 0;
+    const shipping = parseFloat(document.getElementById('shipping-cost').value) || 0;
+    const grandTotal = parseFloat(document.getElementById('summary-grand-total').textContent) || 0;
+    const notes = document.getElementById('invoice-notes').value;
     
-    invoiceData.taxRate = taxRate;
-    invoiceData.tax = taxAmount;
-    
-    invoiceData.additionalDiscount = parseFloat(document.getElementById('additional-discount').value) || 0;
-    invoiceData.shipping = parseFloat(document.getElementById('shipping-charges').value) || 0;
-    invoiceData.grandTotal = parseFloat(document.getElementById('summary-grand-total').textContent.replace(/[^0-9.]/g, '')) || 0;
-    
-    // Make API request to generate PDF - using a short timeout to show the generating toast
-    setTimeout(() => {
-        fetch('http://localhost:3000/api/invoice/generate-pdf', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(invoiceData)
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Hide generating toast
-            hideToast('pdf-generating');
-            
-            // Show success toast
-            showToast('pdf-ready');
-            
-            console.log('PDF generated successfully:', data);
-            
-            // Extract the data for the PDF
-            const { pdfContent, downloadUrl } = data;
-            
-            // Open the PDF instantly in a new tab
-            if (pdfContent) {
-                // Create a new tab with the HTML content
-                const newTab = window.open('', '_blank');
-                newTab.document.write(pdfContent);
-                newTab.document.close();
-                newTab.focus(); // Focus on the new tab
-            } else {
-                // Fallback to opening the download URL
-                window.open(downloadUrl, '_blank');
-            }
-            
-            // Update UI to show the invoice has been saved
-            // Add the new invoice to the list (in a real app, this would be done via a server fetch)
-            const newInvoice = {
-                id: data.invoiceId,
-                date: invoiceData.issueDate,
-                type: invoiceData.invoiceType,
-                customer: invoiceData.customerName,
-                products: invoiceData.items,
-                subtotal: invoiceData.subtotal,
-                tax: invoiceData.tax,
-                discount: invoiceData.additionalDiscount,
-                grandTotal: invoiceData.grandTotal,
-                paymentMode: "Generated",
-                status: "paid",
-                dueDate: invoiceData.dueDate,
-                handler: invoiceData.handler
-            };
-            
-            // Reset the form and close the modal after successful PDF generation
-            resetInvoiceForm();
-            closeCreateInvoiceModal();
-            
-            // Add the new invoice to the UI
-            addNewInvoiceToUI(newInvoice);
-            
-            // Hide success toast after 2 seconds
-            setTimeout(() => {
-                hideToast('pdf-ready');
-            }, 2000);
-        })
-        .catch(error => {
-            console.error('Error generating PDF:', error);
-            
-            // Hide generating toast
-            hideToast('pdf-generating');
-            
-            // Show error toast
-            showToast('pdf-error');
-            setTimeout(() => {
-                hideToast('pdf-error');
-            }, 3000);
+    // Create PDF using jsPDF
+    try {
+        // Initialize PDF
+        const pdf = new jspdf.jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4'
         });
-    }, 100); // Very short delay just to show the toast
+        
+        // Set default font
+        pdf.setFont("helvetica");
+        
+        // Add header
+        pdf.setFontSize(22);
+        pdf.setTextColor(44, 62, 80); // Dark text color
+        pdf.text("INVOICE", 105, 20, { align: "center" });
+        
+        // Add invoice info
+        pdf.setFontSize(10);
+        pdf.setTextColor(52, 73, 94);
+        pdf.text(`Invoice #: ${invoiceNumber}`, 200, 20, { align: "right" });
+        pdf.text(`Date: ${issueDate}`, 200, 25, { align: "right" });
+        pdf.text(`Due Date: ${dueDate}`, 200, 30, { align: "right" });
+        
+        // Add company info (sender)
+        pdf.setFontSize(12);
+        pdf.setFont("helvetica", "bold");
+        pdf.text("From:", 15, 40);
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(10);
+        pdf.text("Your Company Name", 15, 45);
+        pdf.text("Your Company Address", 15, 50);
+        
+        // Add customer info (recipient)
+        pdf.setFontSize(12);
+        pdf.setFont("helvetica", "bold");
+        pdf.text("To:", 120, 40);
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(10);
+        pdf.text(customerName, 120, 45);
+        if (customerAddress) {
+            const addressLines = pdf.splitTextToSize(customerAddress, 70);
+            pdf.text(addressLines, 120, 50);
+            let yPos = 50 + addressLines.length * 5;
+            if (customerEmail) pdf.text(`Email: ${customerEmail}`, 120, yPos += 5);
+            if (customerPhone) pdf.text(`Phone: ${customerPhone}`, 120, yPos += 5);
+        } else {
+            let yPos = 45;
+            if (customerEmail) pdf.text(`Email: ${customerEmail}`, 120, yPos += 5);
+            if (customerPhone) pdf.text(`Phone: ${customerPhone}`, 120, yPos += 5);
+        }
+        
+        // Add items table
+        const tableColumns = [
+            { header: 'Item Description', dataKey: 'description' },
+            { header: 'Quantity', dataKey: 'quantity' },
+            { header: 'Rate', dataKey: 'rate' },
+            { header: 'Discount', dataKey: 'discount' },
+            { header: 'Amount', dataKey: 'amount' }
+        ];
+        
+        const tableRows = items.map(item => ({
+            description: item.description,
+            quantity: item.quantity.toString(),
+            rate: formatCurrency(item.rate).replace('₹', ''),
+            discount: formatCurrency(item.discount).replace('₹', ''),
+            amount: formatCurrency(item.amount).replace('₹', '')
+        }));
+        
+        pdf.autoTable({
+            startY: 70,
+            head: [tableColumns.map(col => col.header)],
+            body: tableRows,
+            theme: 'grid',
+            headStyles: {
+                fillColor: [108, 92, 231],
+                textColor: [255, 255, 255],
+                fontStyle: 'bold'
+            },
+            columnStyles: {
+                0: { cellWidth: 80 }, // Description
+                1: { cellWidth: 20, halign: 'center' }, // Quantity
+                2: { cellWidth: 25, halign: 'right' }, // Rate
+                3: { cellWidth: 25, halign: 'right' }, // Discount
+                4: { cellWidth: 30, halign: 'right' }  // Amount
+            },
+            styles: {
+                fontSize: 9,
+                cellPadding: 3
+            },
+            didDrawPage: function(data) {
+                // Add page number
+                pdf.setFontSize(8);
+                pdf.text(`Page ${pdf.internal.getNumberOfPages()}`, 
+                    pdf.internal.pageSize.width - 20, 
+                    pdf.internal.pageSize.height - 10);
+            }
+        });
+        
+        // Add summary section
+        const finalY = pdf.lastAutoTable.finalY + 10;
+        
+        // Summary table
+        pdf.autoTable({
+            startY: finalY,
+            body: [
+                ['Subtotal:', formatCurrency(subtotal).replace('₹', '')],
+                [`Tax (${taxRate}%):`, formatCurrency(taxAmount).replace('₹', '')],
+                ['Additional Discount:', formatCurrency(additionalDiscount).replace('₹', '')],
+                ['Shipping:', formatCurrency(shipping).replace('₹', '')],
+                ['Grand Total:', formatCurrency(grandTotal).replace('₹', '')]
+            ],
+            theme: 'plain',
+            columnStyles: {
+                0: { cellWidth: 150, fontStyle: 'bold' },
+                1: { cellWidth: 30, halign: 'right' }
+            },
+            styles: {
+                fontSize: 9,
+                cellPadding: 3
+            },
+            margin: { left: 120 }
+        });
+        
+        // Add notes section
+        if (notes) {
+            const finalY2 = pdf.lastAutoTable.finalY + 10;
+            pdf.setFontSize(10);
+            pdf.setFont("helvetica", "bold");
+            pdf.text("Notes:", 15, finalY2);
+            pdf.setFont("helvetica", "normal");
+            
+            const noteLines = pdf.splitTextToSize(notes, 180);
+            pdf.text(noteLines, 15, finalY2 + 5);
+        }
+        
+        // Add footer
+        pdf.setFontSize(8);
+        pdf.setTextColor(128, 128, 128);
+        pdf.text("Thank you for your business!", 105, pdf.internal.pageSize.height - 10, { align: "center" });
+        
+        // Save and open PDF
+        const pdfBlob = pdf.output('blob');
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+        
+        // Hide generating toast and show success toast
+        hideToast('pdf-generating');
+        showToast('pdf-ready');
+        
+        // Open PDF in new tab
+        window.open(pdfUrl, '_blank');
+        
+        // Show success notification
+        const notification = document.createElement('div');
+        notification.classList.add('success-notification');
+        notification.innerHTML = `
+            <div class="notification-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="notification-message">
+                <h4>Invoice Successfully Generated</h4>
+                <p>Invoice PDF has been generated and opened in a new tab.</p>
+            </div>
+        `;
+        document.body.appendChild(notification);
+        
+        // Show and then fade out the notification
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 100);
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 300);
+        }, 5000);
+        
+        // Hide success toast after 2 seconds
+        setTimeout(() => {
+            hideToast('pdf-ready');
+        }, 2000);
+        
+    } catch (error) {
+        console.error('Error creating PDF:', error);
+        hideToast('pdf-generating');
+        showToast('pdf-error');
+    }
 }
 
 // Function to add a new invoice to the UI
@@ -1787,7 +2121,7 @@ function updatePreviewSummary() {
     const subtotal = parseFloat(document.getElementById('summary-subtotal').textContent) || 0;
     const tax = parseFloat(document.getElementById('summary-tax').textContent) || 0;
     const discount = parseFloat(document.getElementById('additional-discount').value) || 0;
-    const shipping = parseFloat(document.getElementById('shipping-charges').value) || 0;
+    const shipping = parseFloat(document.getElementById('shipping-cost').value) || 0;
     
     // Calculate grand total
     const grandTotal = subtotal + tax - discount + shipping;
@@ -1802,10 +2136,45 @@ function updatePreviewSummary() {
 
 // Helper function to switch tabs (global scope for reuse)
 function switchToTab(tabId) {
+    // Find the tab button for the tab
     const tabButton = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
-    if (tabButton) {
-        tabButton.click();
-    }
+    if (!tabButton) return;
+    
+    const tabContents = document.querySelectorAll('.tab-content');
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    
+    // Update active tab button
+    tabButtons.forEach(btn => btn.classList.remove('active'));
+    tabButton.classList.add('active');
+    
+    // Update active tab content
+    tabContents.forEach(content => {
+        content.classList.remove('active');
+        if (content.id === `${tabId}-tab`) {
+            content.classList.add('active');
+            
+            // Scroll to top of tab content
+            content.scrollTop = 0;
+            
+            // If this is the preview tab, update the preview
+            if (tabId === 'preview-submit') {
+                updateInvoicePreview();
+                setupPreviewSync(true);
+                
+                // Ensure the invoice preview container is scrolled to top
+                const previewContainer = document.querySelector('.invoice-preview-container');
+                if (previewContainer) {
+                    previewContainer.scrollTop = 0;
+                }
+            } else {
+                // Disable real-time sync when not on preview tab
+                setupPreviewSync(false);
+            }
+        }
+    });
+    
+    // Scroll tab into view if needed
+    tabButton.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
 }
 
 // Function to add toast notifications to the page
@@ -2100,14 +2469,177 @@ function addToastNotifications() {
     
     // Add class to validate form when all required fields are filled
     setInterval(() => {
-        const isValid = validateInvoiceForm(true);
-        const form = document.querySelector('.create-invoice-modal');
-        if (form) {
-            if (isValid) {
-                form.classList.add('form-valid');
-            } else {
-                form.classList.remove('form-valid');
-            }
+        if (validateInvoiceForm(true)) {
+            document.getElementById('preview-submit-tab')?.classList.add('form-valid');
+        } else {
+            document.getElementById('preview-submit-tab')?.classList.remove('form-valid');
         }
     }, 1000);
+}
+
+// Setup preview sync functionality
+function setupPreviewSync(enable) {
+    const formInputs = document.querySelectorAll('#create-invoice-form input, #create-invoice-form textarea, #create-invoice-form select');
+    
+    if (enable) {
+        // Enable real-time preview for all form inputs
+        formInputs.forEach(input => {
+            input.addEventListener('input', previewSyncHandler);
+        });
+    } else {
+        // Remove real-time preview handlers
+        formInputs.forEach(input => {
+            input.removeEventListener('input', previewSyncHandler);
+        });
+    }
+}
+
+// Handler function for preview sync
+function previewSyncHandler(e) {
+    // Debounce preview updates for better performance
+    debouncePreviewUpdate();
+}
+
+// Create a debounced preview update function
+let previewUpdateTimeout;
+function debouncePreviewUpdate() {
+    clearTimeout(previewUpdateTimeout);
+    previewUpdateTimeout = setTimeout(() => {
+        updateInvoicePreview();
+    }, 200);
+}
+
+// Format currency in real-time for better user experience
+function initRealTimeCurrencyFormatting() {
+    // Get currency input fields (rate, discount, additional discount, shipping)
+    const currencyInputs = document.querySelectorAll('.item-rate, .item-discount, #additional-discount, #shipping-cost');
+    
+    // Add currency formatting as user types
+    currencyInputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            // When focused, display raw number for editing
+            const value = parseFloat(this.value.replace(/[^0-9.-]+/g, '')) || 0;
+            this.value = value.toString();
+        });
+        
+        input.addEventListener('blur', function() {
+            // When blurred, format as currency
+            const value = parseFloat(this.value) || 0;
+            if (!this.classList.contains('item-discount') && !this.id === 'additional-discount') {
+                this.value = value.toFixed(2);
+            } else {
+                // For discount fields, show zero as empty
+                this.value = value === 0 ? '' : value.toFixed(2);
+            }
+        });
+    });
+}
+
+// Function to provide real-time visual feedback of changes to the summary
+function updateSummaryWithFeedback() {
+    // Get current values for animation
+    const currentSubtotal = parseFloat(document.getElementById('summary-subtotal').textContent) || 0;
+    const currentTax = parseFloat(document.getElementById('summary-tax').textContent) || 0;
+    const currentGrandTotal = parseFloat(document.getElementById('summary-grand-total').textContent) || 0;
+    
+    // Calculate new values
+    const result = calculateInvoiceTotal();
+    
+    // Add a visual indicator for changes
+    if (Math.abs(result.subtotal - currentSubtotal) > 0.01) {
+        document.getElementById('summary-subtotal').parentElement.classList.add('value-updated');
+        setTimeout(() => {
+            document.getElementById('summary-subtotal').parentElement.classList.remove('value-updated');
+        }, 1000);
+    }
+    
+    if (Math.abs(result.grandTotal - currentGrandTotal) > 0.01) {
+        document.getElementById('summary-grand-total').parentElement.classList.add('value-updated');
+        setTimeout(() => {
+            document.getElementById('summary-grand-total').parentElement.classList.remove('value-updated');
+        }, 1000);
+    }
+    
+    // Update preview if active
+    if (document.getElementById('preview-submit-tab') && 
+        document.getElementById('preview-submit-tab').classList.contains('active')) {
+        updatePreviewItems();
+        updatePreviewSummary();
+    }
+}
+
+// Function to initialize real-time customer/supplier details update
+function initCustomerDetailsRealTimeUpdate() {
+    // Get all customer/supplier input fields
+    const customerInputs = [
+        document.getElementById('customer-supplier'),
+        document.getElementById('customer-email'),
+        document.getElementById('customer-phone'),
+        document.getElementById('customer-address')
+    ];
+    
+    // Add real-time update for customer details
+    customerInputs.forEach(input => {
+        if (input) {
+            input.addEventListener('input', debounce(function() {
+                // Update preview in real-time if preview tab is active
+                if (document.getElementById('preview-submit-tab') && 
+                    document.getElementById('preview-submit-tab').classList.contains('active')) {
+                    // Update just the customer preview fields
+                    document.getElementById('preview-customer-name').textContent = 
+                        document.getElementById('customer-supplier').value || 'N/A';
+                    document.getElementById('preview-customer-address').textContent = 
+                        document.getElementById('customer-address').value || '';
+                    document.getElementById('preview-customer-email').textContent = 
+                        document.getElementById('customer-email').value || '';
+                    document.getElementById('preview-customer-phone').textContent = 
+                        document.getElementById('customer-phone').value || '';
+                }
+            }, 200));
+        }
+    });
+}
+
+// Update initInvoiceCreation to include our new function
+function initInvoiceCreation() {
+    // Initialize invoice creation form
+    initInvoiceTabs();
+    initLogoUpload();
+    initInvoiceItems();
+    initTaxCalculation();
+    initCustomerDetailsRealTimeUpdate(); // Add this line
+    initInvoiceModalButtons();
+    initRealTimeCurrencyFormatting(); // Add real-time currency formatting
+    
+    // Set current date
+    setCurrentDate();
+    
+    // Create invoice button
+    const createInvoiceBtn = document.querySelector('.create-invoice-btn');
+    if (createInvoiceBtn) {
+        createInvoiceBtn.addEventListener('click', openCreateInvoiceModal);
+    }
+}
+
+// Helper function to format dates consistently
+function formatDate(dateString) {
+    if (!dateString) return 'N/A';
+    
+    try {
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return dateString; // Return original if invalid
+        
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    } catch (e) {
+        return dateString; // Fallback to original string
+    }
+}
+
+// Helper function for currency formatting
+function formatCurrency(amount, currency = '₹') {
+    return `${currency}${parseFloat(amount).toFixed(2)}`;
 } 

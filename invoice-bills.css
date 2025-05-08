@@ -1825,4 +1825,220 @@
 
 .cancel-btn:hover {
     background-color: #edf2f7 !important;
+}
+
+/* Real-time update visual feedback */
+.value-changed {
+    animation: highlight-change 0.5s ease;
+}
+
+@keyframes highlight-change {
+    0% {
+        background-color: rgba(255, 255, 0, 0.3);
+    }
+    100% {
+        background-color: transparent;
+    }
+}
+
+/* Real-time editing styles */
+.item-row input:focus {
+    border-color: #4a6cf7;
+    box-shadow: 0 0 0 2px rgba(74, 108, 247, 0.2);
+}
+
+.summary-row input:focus {
+    border-color: #4a6cf7;
+    box-shadow: 0 0 0 2px rgba(74, 108, 247, 0.2);
+}
+
+/* Better visual feedback for active fields */
+.item-description:not(:placeholder-shown),
+.item-quantity:not(:placeholder-shown),
+.item-rate:not(:placeholder-shown),
+.item-discount:not(:placeholder-shown) {
+    background-color: #f0f7ff;
+}
+
+/* Real-time feedback indicators */
+.summary-value,
+.summary-tax-value,
+.summary-discount-value,
+.item-amount {
+    transition: all 0.2s ease;
+}
+
+/* Highlight grand total during changes */
+.grand-total .summary-value.value-changed {
+    font-weight: bold;
+    animation: highlight-total-change 0.5s ease;
+}
+
+@keyframes highlight-total-change {
+    0% {
+        color: #4a6cf7;
+        transform: scale(1.05);
+    }
+    100% {
+        color: inherit;
+        transform: scale(1);
+    }
+}
+
+/* Real-time summary update visual feedback */
+.value-updated {
+    animation: highlight-update 1s ease;
+}
+
+@keyframes highlight-update {
+    0% {
+        background-color: rgba(74, 108, 247, 0.1);
+    }
+    50% {
+        background-color: rgba(74, 108, 247, 0.3);
+    }
+    100% {
+        background-color: transparent;
+    }
+}
+
+/* Enhanced summary row styles for better visual feedback */
+.summary-row {
+    transition: background-color 0.3s ease;
+    border-radius: 4px;
+    padding: 4px;
+}
+
+/* Grand total highlight effect */
+.summary-row.grand-total.value-updated {
+    animation: highlight-grand-total 1s ease;
+}
+
+@keyframes highlight-grand-total {
+    0% {
+        background-color: rgba(0, 184, 148, 0.1);
+        transform: scale(1);
+    }
+    50% {
+        background-color: rgba(0, 184, 148, 0.2);
+        transform: scale(1.02);
+    }
+    100% {
+        background-color: transparent;
+        transform: scale(1);
+    }
+}
+
+/* PDF Generation Toast and Notification Styles */
+.toast-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 20px;
+    background-color: #4a6cf7;
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.toast-notification.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.toast-notification .icon {
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toast-notification .icon i {
+    font-size: 18px;
+}
+
+.toast-notification.generating {
+    background-color: #3498db;
+}
+
+.toast-notification.ready {
+    background-color: #2ecc71;
+}
+
+.toast-notification.error {
+    background-color: #e74c3c;
+}
+
+/* Loading spinner for PDF generation */
+.loading-spinner {
+    width: 18px;
+    height: 18px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Success notification */
+.success-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid #2ecc71;
+    border-radius: 4px;
+    padding: 16px;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    width: 320px;
+    transform: translateX(400px);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.success-notification.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.notification-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(46, 204, 113, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+}
+
+.notification-icon i {
+    color: #2ecc71;
+    font-size: 20px;
+}
+
+.notification-message h4 {
+    margin: 0 0 4px 0;
+    color: #333;
+}
+
+.notification-message p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
 } 

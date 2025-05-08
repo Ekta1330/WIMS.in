@@ -5,12 +5,17 @@
 
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
+const HOSTNAME = process.env.HOSTNAME || 'localhost';
 
 // Import backend services
 const reportGenerator = require('./backend/report-generator');
 const pdfGenerator = require('./backend/pdf-generator');
+
+// Enable CORS for all routes
+app.use(cors());
 
 // Serve static files
 app.use('/static', express.static(path.join(__dirname, 'static')));
@@ -30,7 +35,7 @@ app.use('/reports', express.static(path.join(__dirname, 'reports')));
 app.use('/invoices', express.static(path.join(__dirname, 'invoices')));
 
 // Start the server
-app.listen(PORT, () => {
-  console.log(`WIMS.Inventory system is running on port ${PORT}`);
-  console.log(`Access the application at http://localhost:${PORT}`);
+app.listen(PORT, HOSTNAME, () => {
+  console.log(`WIMS.Inventory system is running at http://${HOSTNAME}:${PORT}`);
+  console.log(`Access the application at http://${HOSTNAME}:${PORT}`);
 }); 
